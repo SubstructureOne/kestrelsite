@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FunctionComponent } from 'react'
 import { supabase } from '../utils/supabaseClient'
+import { Session } from "@supabase/gotrue-js";
 
-export default function Account({ session }) {
+interface AccountProps {
+    session: Session,
+}
+
+const Account: FunctionComponent<AccountProps> = ({ session }) => {
     const [loading, setLoading] = useState<boolean>(true)
-    const [username, setUsername] = useState<string | null>(null)
-    const [website, setWebsite] = useState<string | null>(null)
-    const [avatar_url, setAvatarUrl] = useState<string | null>(null)
+    const [username, setUsername] = useState<string>("")
+    const [website, setWebsite] = useState<string>("")
+    const [avatar_url, setAvatarUrl] = useState<string>("")
 
     useEffect(() => {
-        getProfile()
+        void getProfile()
     }, [session])
 
     async function getProfile() {
@@ -42,34 +47,31 @@ export default function Account({ session }) {
                 setAvatarUrl(user?.last_sign_in_at)
             }
         } catch (error) {
-            alert(error.message)
+            alert(JSON.stringify(error))
         } finally {
             setLoading(false)
         }
     }
 
-    async function updateProfile({ username, website, avatar_url }) {
+    async function updateProfile(username: string, website: string, avatar_url: string) {
         try {
             setLoading(true)
             const user = supabase.auth.user()
 
             const updates = {
-                id: user.id,
+                id: user?.id,
                 username,
                 website,
                 avatar_url,
                 updated_at: new Date(),
             }
 
-            let { error } = await supabase.from('profiles').upsert(updates, {
+            await supabase.from('profiles').upsert(updates, {
                 returning: 'minimal', // Don't return the value after inserting
             })
 
-            if (error) {
-                throw error
-            }
         } catch (error) {
-            alert(error.message)
+            alert(JSON.stringify(error))
         } finally {
             setLoading(false)
         }
@@ -79,7 +81,7 @@ export default function Account({ session }) {
         <div className="form-widget">
             <div>
                 <label htmlFor="email">Email</label>
-                <input id="email" type="text" value={session.user.email} disabled />
+                <input id="email" type="text" value={session.user?.email} disabled />
             </div>
             <div>
                 <label htmlFor="username">Name</label>
@@ -103,7 +105,7 @@ export default function Account({ session }) {
             <div>
                 <button
                     className="button block primary"
-                    onClick={() => updateProfile({ username, website, avatar_url })}
+                    onClick={() => updateProfile(username, website, avatar_url)}
                     disabled={loading}
                 >
                     {loading ? 'Loading ...' : 'Update'}
@@ -118,3 +120,5 @@ export default function Account({ session }) {
         </div>
     )
 }
+
+export default Account;

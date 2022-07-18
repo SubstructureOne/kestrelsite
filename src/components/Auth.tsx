@@ -16,7 +16,7 @@ export default function Auth() {
             if (error) throw error
             // alert('Check your email for the login link!')
         } catch (error) {
-            alert(error.error_description || error.message)
+            alert(JSON.stringify(error))
         } finally {
             setLoading(false)
         }
@@ -46,7 +46,7 @@ export default function Auth() {
                     <button
                         onClick={(e) => {
                             e.preventDefault()
-                            handleLogin(email, password)
+                            handleLogin(email, password).then()
                         }}
                         className="button block"
                         disabled={loading}
