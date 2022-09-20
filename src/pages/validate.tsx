@@ -11,7 +11,7 @@ import {
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui'
 import { clusterApiUrl } from '@solana/web3.js'
-import SignMessage from '../components/signMessage'
+import SignMessage from '../utils/signMessage'
 // const getProvider = () => {
 //     if ('phantom' in window) {
 //         const provider = window.phantom?.solana;
