@@ -21,12 +21,12 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 <a href="/" className="nav-link w-nav-link w--current">Docs</a>
                 <a href="/apps" className="nav-link w-nav-link">Apps</a>
                 <a href="/contact" className="nav-link w-nav-link">Contact</a>
-                <a
-                    href="#"
-                    className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"
-                >
-                    Facebook
-                </a>
+                {/*<a*/}
+                {/*    href="#"*/}
+                {/*    className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"*/}
+                {/*>*/}
+                {/*    Facebook*/}
+                {/*</a>*/}
                 <a
                     href="#"
                     className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"
@@ -35,14 +35,16 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 </a>
             </nav>
             <a
-                href="http://www.twitter.com/webflowapp"
-                className="nav-link social-icons last w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block">
+                href="http://www.twitter.com/substructureone"
+                className="nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+            >
                 <img src="/images/twitter-icon.svg" width="16" alt="" />
             </a>
             <a
-                href="http://www.facebook.com/webflow"
-                className="nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block">
-                <img src="/images/facebook-icon2.svg" width="15" alt="" />
+                href="https://github.com/SubstructureOne"
+                className="nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+            >
+                <img src="/images/GitHub-Mark-Light-32px.png" width="15" alt="" />
             </a>
             <div className="menu-button w-nav-button">
                 <div className="menu-icon w-icon-nav-menu"></div>
