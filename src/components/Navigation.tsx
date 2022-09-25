@@ -7,11 +7,11 @@ type NavigationProps = {
 export const Navigation: FunctionComponent<NavigationProps> = () => {
     const router = useRouter()
     const defaultClasses = "nav-link w-nav-link"
-    const iconClasses = "nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+    const profileClasses = "nav-link w-inline-block social-icons"
+    const socialIcons = profileClasses + " w-hidden-small w-hidden-tiny"
     const currentTabAppend = " w--current"
     const [docsClasses, setDocsClasses] = useState(defaultClasses)
     const [appsClasses, setAppsClasses] = useState(defaultClasses)
-    const [contactClasses, setContactClasses] = useState(defaultClasses)
     useEffect(
         () => {
             if (!router.isReady) return;
@@ -23,9 +23,9 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 case "/apps":
                     setAppsClasses(defaultClasses + currentTabAppend)
                     break
-                case "/contact":
-                    setContactClasses(defaultClasses + currentTabAppend)
-                    break
+                // case "/contact":
+                //     setContactClasses(defaultClasses + currentTabAppend)
+                //     break
             }
         },
         [router.isReady],
@@ -41,7 +41,7 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                     alt=""
                     className="stone-logo"
                 />
-                <div className="logo-text">Kestrel</div>
+                <div className="logo-text w-hidden-tiny w-hidden-small">Kestrel</div>
             </a>
             <nav role="navigation" className="nav-menu w-nav-menu">
                 <a href="https://docs.kestrel.codes" className={docsClasses} target="_blank">Docs</a>
@@ -62,20 +62,20 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
             </nav>
             <a
                 href="/profile"
-                className={iconClasses}
+                className={profileClasses}
             >
                 <img src="/images/profile-icon-white.png" width="15" alt="" />
             </a>
             <a
                 href="https://www.twitter.com/substructureone"
-                className={iconClasses}
+                className={socialIcons}
                 target="_blank"
             >
                 <img src="/images/twitter-icon.svg" width="16" alt="" />
             </a>
             <a
                 href="https://github.com/SubstructureOne"
-                className={iconClasses}
+                className={socialIcons}
                 target="_blank"
             >
                 <img src="/images/GitHub-Mark-Light-32px.png" width="15" alt="" />
