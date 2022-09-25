@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
 import Auth from '../components/Auth'
-import Account from '../components/Account'
-import {Session} from "@supabase/gotrue-js";
+// import Account from '../components/Account'
+// import {Session} from "@supabase/gotrue-js";
 import { NextPage } from 'next'
 import { Headers } from '../components/Headers'
 import { Navigation } from '../components/Navigation'
 import Footer from '../components/Footer'
 
 const Home: NextPage = () => {
-    const [session, setSession] = useState<Session|null>(null)
-
-    useEffect(() => {
-        setSession(supabase.auth.session())
-
-        supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
-        })
-    }, [])
+    // const [session, setSession] = useState<Session|null>(null)
+    //
+    // useEffect(() => {
+    //     setSession(supabase.auth.session())
+    //
+    //     supabase.auth.onAuthStateChange((_event, session) => {
+    //         setSession(session)
+    //     })
+    // }, [])
 
     return <>
         <Headers title="Kestrel: The Substructure for Open Source Software as a Service"/>
@@ -34,7 +34,6 @@ const Home: NextPage = () => {
                         <div className="horizontal-bar"></div>
                         <div className="main-subheading">
                             Deploy open source software at scale without upfront fees or upkeep.
-                            <br/>
                         </div>
                         <a
                             href="https://docs.kestrel.codes"
@@ -58,7 +57,7 @@ const Home: NextPage = () => {
                             <img src="/images/tools_white.svg" width="69" alt=""/>
                         </div>
                         <p>
-                            Kestrel applications leverage cryptography to allow developers to
+                            Kestrel allows and encourages developers to
                             customize and extend functionality without exposing private data. Apps
                             can be freely forked, tweaked, and repurposed.
                         </p>
