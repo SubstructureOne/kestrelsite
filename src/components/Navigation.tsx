@@ -1,9 +1,35 @@
-import { FunctionComponent } from 'react'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 type NavigationProps = {
 }
 
 export const Navigation: FunctionComponent<NavigationProps> = () => {
+    const router = useRouter()
+    const defaultClasses = "nav-link w-nav-link"
+    const iconClasses = "nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+    const currentTabAppend = " w--current"
+    const [docsClasses, setDocsClasses] = useState(defaultClasses)
+    const [appsClasses, setAppsClasses] = useState(defaultClasses)
+    const [contactClasses, setContactClasses] = useState(defaultClasses)
+    useEffect(
+        () => {
+            if (!router.isReady) return;
+            console.log(`Pathname: ${router.pathname}`)
+            switch (router.pathname) {
+                case "/docs":
+                    setDocsClasses(defaultClasses + currentTabAppend)
+                    break
+                case "/apps":
+                    setAppsClasses(defaultClasses + currentTabAppend)
+                    break
+                case "/contact":
+                    setContactClasses(defaultClasses + currentTabAppend)
+                    break
+            }
+        },
+        [router.isReady],
+    )
     return <div role="banner" className="navbar w-nav">
         <div className="w-container">
             <a href="/" className="brand w-clearfix w-nav-brand w--current">
@@ -18,9 +44,9 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 <div className="logo-text">Kestrel</div>
             </a>
             <nav role="navigation" className="nav-menu w-nav-menu">
-                <a href="/" className="nav-link w-nav-link w--current">Docs</a>
-                <a href="/apps" className="nav-link w-nav-link">Apps</a>
-                <a href="/contact" className="nav-link w-nav-link">Contact</a>
+                <a href="/docs" className={docsClasses} target="_blank">Docs</a>
+                <a href="/apps" className={appsClasses}>Apps</a>
+                <a href="/contact" className={contactClasses}>Contact</a>
                 {/*<a*/}
                 {/*    href="#"*/}
                 {/*    className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"*/}
@@ -35,14 +61,22 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 </a>
             </nav>
             <a
-                href="http://www.twitter.com/substructureone"
-                className="nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+                href="/profile"
+                className={iconClasses}
+            >
+                <img src="/images/profile-icon-white.png" width="15" alt="" />
+            </a>
+            <a
+                href="https://www.twitter.com/substructureone"
+                className={iconClasses}
+                target="_blank"
             >
                 <img src="/images/twitter-icon.svg" width="16" alt="" />
             </a>
             <a
                 href="https://github.com/SubstructureOne"
-                className="nav-link social-icons w-hidden-medium w-hidden-small w-hidden-tiny w-inline-block"
+                className={iconClasses}
+                target="_blank"
             >
                 <img src="/images/GitHub-Mark-Light-32px.png" width="15" alt="" />
             </a>
