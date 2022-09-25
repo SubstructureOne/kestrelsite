@@ -55,7 +55,7 @@ const Home: NextPage = () => {
                         <div className="number">001</div>
                         <div className="process-titles">Open Code, Open Data</div>
                         <div className="icon-wrapper">
-                            <img src="/images/lightbulb_white.svg" width="69" alt=""/>
+                            <img src="/images/tools_white.svg" width="69" alt=""/>
                         </div>
                         <p>
                             Kestrel applications leverage cryptography to allow developers to
@@ -67,7 +67,7 @@ const Home: NextPage = () => {
                         <div className="number">002</div>
                         <div className="process-titles">Self-Sustaining</div>
                         <div className="icon-wrapper">
-                            <img src="/images/mobile-white.svg" width="95" alt=""/>
+                            <img src="/images/speedometer_white.svg" width="95" alt=""/>
                         </div>
                         <p>
                             By utilizing pay-as-you-go pricing mechanisms, developers can deploy
