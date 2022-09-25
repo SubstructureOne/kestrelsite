@@ -20,7 +20,7 @@ const Home: NextPage = () => {
     }, [])
 
     return <>
-        <Headers title="Substructure Kestrel: The Platform for Open Source Software as a Service"/>
+        <Headers title="Kestrel: The Substructure for Open Source Software as a Service"/>
         <Navigation/>
         {/*<div className="container" style={{ padding: '50px 0 100px 0' }}>*/}
         {/*    {!session ? <Auth /> : <Account key={session.user?.id} session={session} />}*/}
@@ -29,14 +29,20 @@ const Home: NextPage = () => {
             <div className="mask w-slider-mask">
                 <div className="slide w-slide">
                     <div className="w-container">
-                        <h1 className="main-heading">Substructure Kestrel</h1>
+                        <h1 className="main-heading">Kestrel Substructure</h1>
                         <h1 className="main-heading bold">Open Source<br/>Software as a Service</h1>
                         <div className="horizontal-bar"></div>
                         <div className="main-subheading">
                             Deploy open source software at scale without upfront fees or upkeep.
                             <br/>
                         </div>
-                        <a href="work.html" className="button">Learn How</a>
+                        <a
+                            href="https://docs.kestrel.codes"
+                            className="button"
+                            target="_blank"
+                        >
+                            Learn How
+                        </a>
                     </div>
                 </div>
             </div>
