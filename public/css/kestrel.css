@@ -1,0 +1,18 @@
+table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    border: 1px solid grey;
+}
+
+th, td {
+    padding: 10px;
+    white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+    background-color: white;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #eeeeee;
+}
