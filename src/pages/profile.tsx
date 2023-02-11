@@ -106,12 +106,25 @@ function accountInfoHtml(
         <h4>User: {accountInfo.email}</h4>
         <div className="w-container">
             <div className="w-row">
-                <div className="w-col w-col-5">
-                    <div className="process-titles">Account Balance</div>
-                    <p>{userInfo === null ? "Loading..." : userInfo.balance}</p>
-                    <p>Make a deposit</p>
+                <div className="w-col w-col-3">
+                    <div className="process-titles">Account Info</div>
+                    <p>{userInfo === null ? "Loading..." : <h4>Balance: ${userInfo.balance.toFixed(2)}</h4>}</p>
+                    <section>
+                        <div className="product">
+                            <h1
+                                style={{borderRadius: "6px", margin: "10px", width: "54px", height: "57px"}}
+                            >$</h1>
+                            <div className="description">
+                                <h3>Add $5 to account</h3>
+                                <h5>$5.00</h5>
+                            </div>
+                        </div>
+                        <form action="/api/create-checkout-session" method="POST">
+                            <button type="submit" id="checkout-button">Checkout</button>
+                        </form>
+                    </section>
                 </div>
-                <div className="w-col w-col-5">
+                <div className="w-col">
                     <div className="process-titles">Recent charges</div>
                     <table>
                         <thead>
@@ -132,7 +145,7 @@ function accountInfoHtml(
                         </tbody>
                     </table>
                 </div>
-                <div className="w-col w-col-5">
+                <div className="w-col">
                     <p className="process-titles">Recent transactions</p>
                     <table>
                         <thead>

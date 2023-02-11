@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const userInfo = await getuser(client, id);
         console.log(`Returning: ${JSON.stringify(userInfo)}`)
         res.status(200).json(userInfo)
+        await client.end()
     } else {
         res
             .status(405)

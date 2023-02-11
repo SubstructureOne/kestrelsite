@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const client = await pgconnect()
         const charges = await getCharges(client, userId)
         res.status(200).json(charges)
+        await client.end()
     } else {
         res
             .status(405)
