@@ -46,13 +46,6 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
             <nav role="navigation" className="nav-menu w-nav-menu">
                 <a href="https://docs.kestrel.codes" className={docsClasses} target="_blank">Docs</a>
                 <a href="/apps" className={appsClasses}>Apps</a>
-                {/*<a href="/contact" className={contactClasses}>Contact</a>*/}
-                {/*<a*/}
-                {/*    href="#"*/}
-                {/*    className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"*/}
-                {/*>*/}
-                {/*    Facebook*/}
-                {/*</a>*/}
                 <a
                     href="#"
                     className="nav-link w-hidden-main w-hidden-medium w-hidden-small w-hidden-tiny w-nav-link"
@@ -64,6 +57,7 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 href="/profile"
                 className={profileClasses}
             >
+                Profile&nbsp;
                 <img src="/images/profile-icon-white.png" width="15" alt="" />
             </a>
             <a

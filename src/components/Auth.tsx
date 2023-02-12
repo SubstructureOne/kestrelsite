@@ -23,34 +23,36 @@ const Auth: FunctionComponent<AuthProperties> = ({setSession}) => {
         setSession(session)
     }
     return (
-        <div className="w-container">
-            <form
-                id="login-form"
-                name="login-form"
-                onSubmit={onSubmitHandler}
-            >
-                <label htmlFor="email">Email</label>
-                <input
-                    type="text"
-                    className="w-input"
-                    maxLength={256}
-                    name="email"
-                    id="email"
-                    value={email}
-                    onChange={e=>setEmail(e.target.value)}
-                />
-                <label htmlFor="password">Password</label>
-                <input
-                    type="password"
-                    className="w-input"
-                    maxLength={256}
-                    name="password"
-                    id="password"
-                    value={password}
-                    onChange={e=>setPassword(e.target.value)}
-                />
-                <input type="submit" value="Submit" className="w-button" />
-            </form>
+        <div className="w-container" style={{marginLeft: "auto", marginRight: "auto", clear: "both"}}>
+            <div className="w-col w-col-3">
+                <form
+                    id="login-form"
+                    name="login-form"
+                    onSubmit={onSubmitHandler}
+                >
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="text"
+                        className="w-input"
+                        maxLength={256}
+                        name="email"
+                        id="email"
+                        value={email}
+                        onChange={e=>setEmail(e.target.value)}
+                    />
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        className="w-input"
+                        maxLength={256}
+                        name="password"
+                        id="password"
+                        value={password}
+                        onChange={e=>setPassword(e.target.value)}
+                    />
+                    <input type="submit" value="Submit" className="w-button" />
+                </form>
+            </div>
         </div>
     )
 }
