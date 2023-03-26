@@ -1,6 +1,6 @@
 const Footer = () => {
     return <div className="section footer wf-section">
-        <div className="w-container">
+        <div className="w-container px-10">
             <div className="w-row">
                 <div className="w-clearfix w-col w-col-4">
                     {/*<img*/}

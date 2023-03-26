@@ -3,7 +3,7 @@ import { Headers } from '../components/Headers'
 import { Navigation } from '../components/Navigation'
 import Footer from '../components/Footer'
 import { checkSession, supabase } from '../utils/supabaseClient'
-import Auth from '../components/Auth'
+import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
 import {FunctionComponent, ReactElement, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
@@ -177,6 +177,9 @@ function accountInfoHtml(
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
     const router = useRouter();
+    const signout = async () => {
+        const { error } = await supabase.auth.signOut()
+    }
     return <div>
         <div className="sidebar w-col w-col-3">
             <ul>
@@ -193,6 +196,11 @@ function accountInfoHtml(
                 <li>
                     <a href="?page=charges" className={router.query.page === "charges" ? "active" : ""}>
                         <span className="item">Charges</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/" className="" onClick={signout}>
+                        <span className="item">Sign Out</span>
                     </a>
                 </li>
             </ul>
@@ -232,7 +240,7 @@ const ProfileOrLogin = () => {
     if (session) {
         return <AccountInfoComponent session={session}/>
     } else {
-        return <Auth setSession={setSession}/>
+        return <SigninForm setSession={setSession}/>
     }
 }
 
