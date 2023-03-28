@@ -10,7 +10,10 @@ const Footer = () => {
                     {/*    className="stone-logo footer"*/}
                     {/*/>*/}
                     <div className="footer-text w-hidden-small w-hidden-tiny">
-                        A <a href="https://substructure.one">substructure.one</a> Project
+                        A <a href="https://substructure.one">Substructure One, LLC</a> Project
+                    </div>
+                    <div className="footer-text">
+                        <a href="termsofuse">Terms & Conditions</a>
                     </div>
                 </div>
                 <div className="w-col w-col-4">
