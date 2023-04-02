@@ -21,17 +21,45 @@ const SignUpFlow: NextPage = () => {
     </>
 }
 
+function CheckEmail() {
+    return <div className="grid h-screen px-4 bg-white place-content-center">
+        <div className="text-center">
+            <p className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                Invitation Sent
+            </p>
+
+            <p className="mt-4 text-gray-500">Check your email for your sign-in link.</p>
+
+            <a
+                href="/"
+                className="inline-block px-5 py-3 mt-6 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring"
+            >
+                Go Back Home
+            </a>
+        </div>
+    </div>
+}
+
 
 function SignupForm() {
     const [name, setName] = useState("")
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
     const [receivedPromos, setReceivePromos] = useState(false)
+    const [alert, setAlert] = useState("")
+    const [emailSent, setEmailSent] = useState(false)
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const { error } = await supabase.auth.signUp({email, password})
+        console.log(`Creating user ${email}`)
+        const { error, user, session } = await supabase.auth.signUp({email, password})
+        console.log(`Error: ${error}, user: ${user}, session: ${session}`)
+        if (error !== null) {
+            setAlert(error.message)
+        } else {
+            setEmailSent(true)
+        }
     }
-    return <div className="bg-white">
+    return emailSent ? CheckEmail() : <div className="bg-white">
         <div className="lg:grid lg:min-h-screen lg:grid-cols-12 border-x-2 border-black">
             <section
                 className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
@@ -73,6 +101,16 @@ function SignupForm() {
                     </div>
 
                     <form className="mt-8 grid grid-cols-6 gap-6" onSubmit={onSubmitHandler}>
+                        {alert == "" ? <></> :
+                            <div role="alert" className="rounded border-l-4 border-red-500 bg-red-50 p-4 col-span-6">
+                                <strong className="block font-medium text-red-800"> Something went wrong </strong>
+
+                                <p className="mt-2 text-sm text-red-700">
+                                    {alert}
+                                </p>
+                            </div>
+                        }
+
                         <div className="col-span-6 sm:col-span-6">
                             <label
                                 htmlFor="Name"
