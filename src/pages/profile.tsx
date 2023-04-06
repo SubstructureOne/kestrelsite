@@ -172,22 +172,6 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
                 </svg>
             </div>
         </a>
-
-        <a
-            className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
-        >
-
-            hello
-        </a>
-
-
-        <a
-            className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
-        >
-
-            hello
-        </a>
-
         {/*<div className="w-col w-col-3">*/}
         {/*    <h2>Account Info</h2>*/}
         {/*    <p>{accountInfo === null ? "Loading..." : <h4>Balance: ${accountInfo.balance.toFixed(2)}</h4>}</p>*/}
@@ -259,7 +243,7 @@ function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
 }
 
 const LeftSideMenu = () => {
-    return <div className="flex h-screen flex-col justify-between border-r bg-white row-span-4">
+    return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
             <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
                 <a
@@ -286,7 +270,7 @@ const LeftSideMenu = () => {
                         />
                     </svg>
 
-                    <span className="text-sm font-medium"> Account Info </span>
+                    <span className="text-sm font-medium hidden md:inline"> Account Info </span>
                 </a>
 
                 <a
@@ -308,7 +292,7 @@ const LeftSideMenu = () => {
                         />
                     </svg>
 
-                    <span className="text-sm font-medium"> Transactions </span>
+                    <span className="text-sm font-medium hidden md:inline"> Transactions </span>
                 </a>
 
                 <a
@@ -330,7 +314,7 @@ const LeftSideMenu = () => {
                         />
                     </svg>
 
-                    <span className="text-sm font-medium"> Charges </span>
+                    <span className="text-sm font-medium hidden md:inline"> Charges </span>
                 </a>
 
                 <a
@@ -352,28 +336,28 @@ const LeftSideMenu = () => {
                         />
                     </svg>
 
-                    <span className="text-sm font-medium"> Sign Out </span>
+                    <span className="text-sm font-medium hidden md:inline"> Sign Out </span>
                 </a>
             </nav>
         </div>
 
-        <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-            <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
-                <img
-                    alt="Man"
-                    src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                    className="h-10 w-10 rounded-full object-cover"
-                />
+        {/*<div className="sticky inset-x-0 bottom-0 border-t border-gray-100">*/}
+        {/*    <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">*/}
+        {/*        <img*/}
+        {/*            alt="Man"*/}
+        {/*            src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"*/}
+        {/*            className="h-10 w-10 rounded-full object-cover"*/}
+        {/*        />*/}
 
-                <div>
-                    <p className="text-xs">
-                        <strong className="block font-medium">Eric Frusciante</strong>
+        {/*        <div>*/}
+        {/*            <p className="text-xs">*/}
+        {/*                <strong className="block font-medium">Eric Frusciante</strong>*/}
 
-                        <span> eric@frusciante.com </span>
-                    </p>
-                </div>
-            </a>
-        </div>
+        {/*                <span> eric@frusciante.com </span>*/}
+        {/*            </p>*/}
+        {/*        </div>*/}
+        {/*    </a>*/}
+        {/*</div>*/}
     </div>
 }
 
@@ -388,7 +372,8 @@ function accountInfoHtml(
     const signout = async () => {
         const { error } = await supabase.auth.signOut()
     }
-    return <div className="grid grid-cols-4 gap-4">
+    // return <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    return <div className="gap-4 flex">
         <LeftSideMenu/>
 
         {/*<div className="sidebar w-col w-col-3">*/}
@@ -415,11 +400,11 @@ function accountInfoHtml(
         {/*        </li>*/}
         {/*    </ul>*/}
         {/*</div>*/}
-        {/*<div>*/}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {router.query.page === undefined ? accountInfoTab(userInfo) : null}
         {router.query.page === "transactions" ? transactionsInfoTab(txnsInfo) : null}
         {router.query.page === "charges" ? chargesInfoTab(chargesInfo) : null}
-        {/*</div>*/}
+        </div>
     </div>
 }
 
