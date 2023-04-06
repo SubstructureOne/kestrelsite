@@ -8,6 +8,7 @@ import {Session} from '@supabase/gotrue-js'
 import {FunctionComponent, ReactElement, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
+import {redirect} from "next/navigation"
 
 type UserInfo = {
     email: string
@@ -151,49 +152,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
                 </div>
             </div>
 
-            <div
-                className="mt-8 inline-flex items-center gap-2 text-indigo-600 sm:mt-12 lg:mt-16"
-            >
-                <p className="font-medium sm:text-lg">Add funds</p>
-
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 transition group-hover:translate-x-3"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                </svg>
-            </div>
         </a>
-        {/*<div className="w-col w-col-3">*/}
-        {/*    <h2>Account Info</h2>*/}
-        {/*    <p>{accountInfo === null ? "Loading..." : <h4>Balance: ${accountInfo.balance.toFixed(2)}</h4>}</p>*/}
-        {/*    <section>*/}
-        {/*        <div className="product">*/}
-        {/*            <h1*/}
-        {/*                style={{borderRadius: "6px", margin: "10px", width: "54px", height: "57px", textAlign: "center"}}*/}
-        {/*            >$</h1>*/}
-        {/*            <div className="description">*/}
-        {/*                <h3>Add $5 to account</h3>*/}
-        {/*                <h5>$5.00</h5>*/}
-        {/*            </div>*/}
-        {/*        </div>*/}
-        {/*        <form action="/api/txns/fund" method="POST">*/}
-        {/*            <button type="submit" id="checkout-button">Checkout</button>*/}
-        {/*        </form>*/}
-        {/*    </section>*/}
-        {/*</div>*/}
-        {/*<div className="w-col w-col-3">*/}
-        {/*    <h2>Postgres Info</h2>*/}
-        {/*    <h5>Postgres Username: {accountInfo?.pg_name}</h5>*/}
-        {/*</div>*/}
     </>
 }
 
@@ -243,6 +202,9 @@ function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
 }
 
 const LeftSideMenu = () => {
+    const signout = async () => {
+        const { error } = await supabase.auth.signOut()
+    }
     return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
             <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
@@ -320,6 +282,7 @@ const LeftSideMenu = () => {
                 <a
                     href="#"
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    onClick={signout}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -369,41 +332,14 @@ function accountInfoHtml(
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
     const router = useRouter();
-    const signout = async () => {
-        const { error } = await supabase.auth.signOut()
-    }
+
     // return <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     return <div className="gap-4 flex">
         <LeftSideMenu/>
-
-        {/*<div className="sidebar w-col w-col-3">*/}
-        {/*    <ul>*/}
-        {/*        <li>*/}
-        {/*            <a href="?" className={router.query.page === undefined ? "active" : ""}>*/}
-        {/*                <span className="item">Account Info</span>*/}
-        {/*            </a>*/}
-        {/*        </li>*/}
-        {/*        <li>*/}
-        {/*            <a href="?page=transactions" className={router.query.page === "transactions" ? "active" : ""}>*/}
-        {/*                <span className="item">Transactions</span>*/}
-        {/*            </a>*/}
-        {/*        </li>*/}
-        {/*        <li>*/}
-        {/*            <a href="?page=charges" className={router.query.page === "charges" ? "active" : ""}>*/}
-        {/*                <span className="item">Charges</span>*/}
-        {/*            </a>*/}
-        {/*        </li>*/}
-        {/*        <li>*/}
-        {/*            <a href="/" className="" onClick={signout}>*/}
-        {/*                <span className="item">Sign Out</span>*/}
-        {/*            </a>*/}
-        {/*        </li>*/}
-        {/*    </ul>*/}
-        {/*</div>*/}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {router.query.page === undefined ? accountInfoTab(userInfo) : null}
-        {router.query.page === "transactions" ? transactionsInfoTab(txnsInfo) : null}
-        {router.query.page === "charges" ? chargesInfoTab(chargesInfo) : null}
+            {router.query.page === undefined ? accountInfoTab(userInfo) : null}
+            {router.query.page === "transactions" ? transactionsInfoTab(txnsInfo) : null}
+            {router.query.page === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
     </div>
 }
