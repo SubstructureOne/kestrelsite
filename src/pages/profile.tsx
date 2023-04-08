@@ -143,11 +143,12 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
         >
             <h2>Postgres Info</h2>
             <div>
-                <h3 className="text-xl font-bold text-indigo-600">
+                <h3 className="text-lg border-b-2 border-gray-100">
                     {accountInfo === null ? "Loading...." : accountInfo.pg_name}
                 </h3>
 
-                <div className="mt-4 border-t-2 border-gray-100 pt-4">
+                {/*<div className="mt-4 border-t-2 border-gray-100 pt-4">*/}
+                <div className="">
                     <p className="text-sm font-medium uppercase text-gray-500">Postgres Username</p>
                 </div>
             </div>
@@ -157,7 +158,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
 }
 
 function chargesInfoTab(chargesInfo: ChargeInfo[] | null) {
-    return <div className="w-col w-col-5">
+    return <div className="col-span-3 p-4 m-4">
         <h2>Recent charges</h2>
         <table>
             <thead>
@@ -172,7 +173,7 @@ function chargesInfoTab(chargesInfo: ChargeInfo[] | null) {
                 {chargesInfo === null ? "Loading..." : chargesInfo.map((charge) => <tr>
                     <td>{new Date(charge.charge_time).toLocaleString()}</td>
                     <td>{charge.charge_type}</td>
-                    <td>{charge.amount}</td>
+                    <td>${(charge.amount || 0).toLocaleString([], {minimumFractionDigits: 2})}</td>
                     <td>{charge.transacted.toString()}</td>
                 </tr>)}
             </tbody>
@@ -181,9 +182,9 @@ function chargesInfoTab(chargesInfo: ChargeInfo[] | null) {
 }
 
 function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
-    return <div className="w-col w-col-5">
+    return <div className="col-span-3 m-4 p-4 min-w-full">
         <h2>Recent transactions</h2>
-        <table>
+        <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
             <thead>
                 <tr>
                     <th scope="col">Time</th>
@@ -213,12 +214,15 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
         const { error } = await supabase.auth.signOut()
         router.reload()
     }
+    const selectedClasses = "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700"
+    const unselectedClasses = "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
     return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
             <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
                 <a
                     href="#"
-                    className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700"
+                    className={selected === "account-info" ? selectedClasses : unselectedClasses}
+                    onClick={() => setSelected("account-info")}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -245,7 +249,8 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
 
                 <a
                     href="#"
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    className={selected === "transactions" ? selectedClasses : unselectedClasses}
+                    onClick={() => setSelected("transactions")}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -267,7 +272,8 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
 
                 <a
                     href="#"
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    className={selected === "charges" ? selectedClasses : unselectedClasses}
+                    onClick={() => setSelected("charges")}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -289,7 +295,7 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
 
                 <a
                     href="#"
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                    className={unselectedClasses}
                     onClick={signout}
                 >
                     <svg
@@ -341,15 +347,13 @@ function accountInfoHtml(
 ): ReactElement {
     const router = useRouter();
     const [selected, setSelected] = useState<MenuItems>("account-info")
-    // const [accoduntInfo, setAccountInfo] = useState<UserInfo|null>()
 
-    // return <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     return <div className="gap-4 flex">
         <LeftSideMenu selected={selected} setSelected={setSelected}/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {router.query.page === undefined ? accountInfoTab(userInfo) : null}
-            {router.query.page === "transactions" ? transactionsInfoTab(txnsInfo) : null}
-            {router.query.page === "charges" ? chargesInfoTab(chargesInfo) : null}
+            {selected === "account-info" ? accountInfoTab(userInfo) : null}
+            {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
+            {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
     </div>
 }
@@ -357,10 +361,10 @@ function accountInfoHtml(
 const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
-    const [accountInfo, setAccountInfo] = useState<UserInfo|null>()
-    const [userInfo, setUserInfo] = useState<AccountInfo|null>()
-    const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>()
-    const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>()
+    const [accountInfo, setAccountInfo] = useState<UserInfo|null>(null)
+    const [userInfo, setUserInfo] = useState<AccountInfo|null>(null)
+    const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
+    const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>(null)
     useEffect(
         () => {
             getUserInfo(session).then((info) => setAccountInfo(info))
@@ -372,9 +376,9 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     )
     return accountInfoHtml(
         accountInfo,
-        userInfo || null,
-        chargesInfo || null,
-        txnsInfo || null,
+        userInfo,
+        chargesInfo,
+        txnsInfo,
     )
 }
 
