@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 import { checkSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
-import {FunctionComponent, ReactElement, useEffect, useState} from 'react'
+import {FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
 import {redirect} from "next/navigation"
@@ -201,9 +201,17 @@ function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
 
 }
 
-const LeftSideMenu = () => {
+type MenuItems = "account-info" | "transactions" | "charges"
+type MenuProps = {
+    selected: MenuItems
+    setSelected: Dispatch<SetStateAction<MenuItems>>
+}
+
+const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => {
+    const router = useRouter()
     const signout = async () => {
         const { error } = await supabase.auth.signOut()
+        router.reload()
     }
     return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
@@ -326,16 +334,18 @@ const LeftSideMenu = () => {
 
 
 function accountInfoHtml(
-    accountInfo: UserInfo,
+    accountInfo: UserInfo | null,
     userInfo: AccountInfo | null,
     chargesInfo: ChargeInfo[] | null,
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
     const router = useRouter();
+    const [selected, setSelected] = useState<MenuItems>("account-info")
+    // const [accoduntInfo, setAccountInfo] = useState<UserInfo|null>()
 
     // return <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     return <div className="gap-4 flex">
-        <LeftSideMenu/>
+        <LeftSideMenu selected={selected} setSelected={setSelected}/>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {router.query.page === undefined ? accountInfoTab(userInfo) : null}
             {router.query.page === "transactions" ? transactionsInfoTab(txnsInfo) : null}
@@ -360,7 +370,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
         },
         []
     )
-    return accountInfo == null ? <p>"Loading..."</p> : accountInfoHtml(
+    return accountInfoHtml(
         accountInfo,
         userInfo || null,
         chargesInfo || null,
