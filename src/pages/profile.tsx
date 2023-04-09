@@ -5,10 +5,9 @@ import Footer from '../components/Footer'
 import { checkSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
-import {FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
+import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
-import {redirect} from "next/navigation"
 
 type UserInfo = {
     email: string
