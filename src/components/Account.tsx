@@ -19,24 +19,11 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
     async function getProfile() {
         try {
             setLoading(true)
-            const user = supabase.auth.user()
+            const {
+                data: { session },
+            } = await supabase.auth.getSession()
+            const { user } = session
 
-            // let { data, error, status } = await supabase
-            //     .from('profiles')
-            //     .select(`username, website, avatar_url`)
-            //     .eq('id', user?.id)
-            //     .single()
-            //
-            // if (error && status !== 406) {
-            //     throw error
-            // }
-
-            // if (data) {
-            //     setUsername(data.username)
-            //     setWebsite(data.website)
-            //     setAvatarUrl(data.avatar_url)
-            // }
-            const session = supabase.auth.session()
             if (session?.access_token) {
                 setUsername(session?.access_token)
             }
