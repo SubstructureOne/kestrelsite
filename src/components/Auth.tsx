@@ -13,7 +13,7 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const {session, error} = await supabase.auth.signIn(
+        const {session, error} = await supabase.auth.signInWithPassword(
             {email, password},
             {redirectTo: "#"}
         )
@@ -127,7 +127,7 @@ const Auth: FunctionComponent<AuthProperties> = ({setSession}) => {
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const {session, error} = await supabase.auth.signIn(
+        const {session, error} = await supabase.auth.signInWithPassword(
             {email, password},
             {redirectTo: "#"}
         )
