@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import { Headers } from '../components/Headers'
 import { Navigation } from '../components/Navigation'
 import Footer from '../components/Footer'
-import { checkSession, supabase } from '../utils/supabaseClient'
+import { useSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
 import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
@@ -169,7 +169,7 @@ function chargesInfoTab(chargesInfo: ChargeInfo[] | null) {
                 </tr>
             </thead>
             <tbody>
-                {chargesInfo === null ? "Loading..." : chargesInfo.map((charge) => <tr>
+                {chargesInfo === null ? "Loading..." : chargesInfo.map((charge) => <tr key={charge.charge_id}>
                     <td>{new Date(charge.charge_time).toLocaleString()}</td>
                     <td>{charge.charge_type}</td>
                     <td>${(charge.amount || 0).toLocaleString([], {minimumFractionDigits: 2})}</td>
@@ -191,7 +191,7 @@ function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
                 </tr>
             </thead>
             <tbody>
-                {txnsInfo === null ? "Loading..." : txnsInfo.map((txn) => <tr>
+                {txnsInfo === null ? "Loading..." : txnsInfo.map((txn) => <tr key={txn.txn_id}>
                     <td>{new Date(txn.txn_time).toLocaleString()}</td>
                     <td>{txn.amount}</td>
                 </tr>)}
@@ -338,7 +338,7 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
 }
 
 
-function accountInfoHtml(
+function AccountInfoHtml(
     accountInfo: UserInfo | null,
     userInfo: AccountInfo | null,
     chargesInfo: ChargeInfo[] | null,
@@ -373,7 +373,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
         },
         []
     )
-    return accountInfoHtml(
+    return AccountInfoHtml(
         accountInfo,
         userInfo,
         chargesInfo,
@@ -382,7 +382,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
 }
 
 const ProfileOrLogin = () => {
-    const [session, setSession] = checkSession()
+    const [session, setSession] = useSession()
     if (session) {
         return <AccountInfoComponent session={session}/>
     } else {

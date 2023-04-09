@@ -22,7 +22,7 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
             const {
                 data: { session },
             } = await supabase.auth.getSession()
-            const { user } = session
+            const user = session?.user
 
             if (session?.access_token) {
                 setUsername(session?.access_token)
@@ -43,7 +43,10 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
     async function updateProfile(username: string, website: string, avatar_url: string) {
         try {
             setLoading(true)
-            const user = supabase.auth.user()
+            const {
+                data: { session },
+            } = await supabase.auth.getSession()
+            const user = session?.user
 
             const updates = {
                 id: user?.id,
@@ -53,9 +56,7 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
                 updated_at: new Date(),
             }
 
-            await supabase.from('profiles').upsert(updates, {
-                returning: 'minimal', // Don't return the value after inserting
-            })
+            await supabase.from('profiles').upsert(updates)
 
         } catch (error) {
             alert(JSON.stringify(error))
