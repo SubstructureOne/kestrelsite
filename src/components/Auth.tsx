@@ -13,9 +13,11 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const {session, error} = await supabase.auth.signIn(
+        const {
+            data: { session },
+            error,
+        } = await supabase.auth.signInWithPassword(
             {email, password},
-            {redirectTo: "#"}
         )
         if (error) {
             throw error
@@ -127,10 +129,10 @@ const Auth: FunctionComponent<AuthProperties> = ({setSession}) => {
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
-        const {session, error} = await supabase.auth.signIn(
-            {email, password},
-            {redirectTo: "#"}
-        )
+        const {
+            data: { session },
+            error,
+        } = await supabase.auth.signInWithPassword({email, password})
         if (error) {
             throw error
         }

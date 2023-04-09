@@ -6,7 +6,7 @@ export async function userFromAuthHeader(req: NextApiRequest): Promise<User|null
     const authHeader = req.headers.authorization
     if (authHeader?.startsWith("Bearer ")) {
         const jwt = authHeader?.substring(7)
-        const {user, error} = await supabase.auth.api.getUser(jwt)
+        const {data: {user}, error} = await supabase.auth.getUser(jwt)
         return user
     }
     return null
