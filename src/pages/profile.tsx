@@ -8,6 +8,8 @@ import {Session} from '@supabase/gotrue-js'
 import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
+import {fundAccountUrl} from "../utils/stripe";
+import React from "react";
 
 type UserInfo = {
     email: string
@@ -28,7 +30,7 @@ async function getUserInfo(session: Session): Promise<UserInfo> {
     }
 }
 
-async function getAccountInfo(session: Session): Promise<AccountInfo> {
+async function getAccountInfo(session: Session): Promise<AccountInfo | null> {
     const user_id = session.user?.id
     if (user_id === undefined) {
         throw new Error("Not logged in")
@@ -41,7 +43,14 @@ async function getAccountInfo(session: Session): Promise<AccountInfo> {
             }
         }
     )
-    return await response.json()
+    if (response.ok) {
+        return await response.json()
+    } else if (response.status == 404) {
+        return null
+    } else {
+        const result = await response.json()
+        throw new Error(`Error getting account info: ${result?.error}`)
+    }
 }
 
 async function getCharges(session: Session): Promise<ChargeInfo[]> {
@@ -77,6 +86,26 @@ async function getTransactions(session: Session): Promise<TransactionInfo[]> {
 }
 
 
+const PaymentBanner: React.FC<{newUser: boolean}> = ({newUser}) => {
+    return <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
+            <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
+                {newUser ? "Initialize your account now" : "Fund your account now"}
+            </p>
+
+            <h2 className="mt-6 text-3xl font-bold">
+                In order to use your Kestrel account, you must purchase credits.
+            </h2>
+
+            <a
+                className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
+                href={fundAccountUrl}
+            >
+                Purchase Credits
+            </a>
+        </div>
+
+}
+
 const PreviewOnly = () => {
     return <>
         <h2>Preview-Only Mode</h2>
@@ -100,13 +129,13 @@ type AccountBalanceComponentArgs = {
 function accountInfoTab(accountInfo: AccountInfo | null) {
     return <>
         <a
-            href="#"
+            href="https://buy.stripe.com/test_8wMcPQclRdsd8xOdQQ"
             className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
         >
-            <h2>Account Balance</h2>
+            <h2>Account Credit</h2>
             <div>
                 <h3 className="text-xl font-bold text-indigo-600">
-                    ${accountInfo === null ? "Loading...." : accountInfo.balance.toFixed(2)}
+                    ${accountInfo?.balance == null ? "Loading...." : accountInfo.balance.toFixed(2)}
                 </h3>
 
                 <div className="mt-4 border-t-2 border-gray-100 pt-4">
@@ -117,7 +146,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
             <div
                 className="mt-8 inline-flex items-center gap-2 text-indigo-600 sm:mt-6"
             >
-                <p className="font-medium sm:text-lg">Add funds</p>
+                <p className="font-medium sm:text-lg">Purchase credits</p>
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +172,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
             <h2>Postgres Info</h2>
             <div>
                 <h3 className="text-lg border-b-2 border-gray-100">
-                    {accountInfo === null ? "Loading...." : accountInfo.pg_name}
+                    {accountInfo == null ? "Loading...." : accountInfo.pg_name}
                 </h3>
 
                 {/*<div className="mt-4 border-t-2 border-gray-100 pt-4">*/}
@@ -340,17 +369,18 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
 
 function AccountInfoHtml(
     accountInfo: UserInfo | null,
-    userInfo: AccountInfo | null,
+    userInfo: AccountInfo | null | undefined,
     chargesInfo: ChargeInfo[] | null,
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
-    const router = useRouter();
     const [selected, setSelected] = useState<MenuItems>("account-info")
 
     return <div className="gap-4 flex">
         <LeftSideMenu selected={selected} setSelected={setSelected}/>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {selected === "account-info" ? accountInfoTab(userInfo) : null}
+            {userInfo === null ? <PaymentBanner newUser={true}/> : (userInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
+            {selected === "account-info" ? accountInfoTab(userInfo || null) : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
             {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
@@ -360,8 +390,9 @@ function AccountInfoHtml(
 const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
+    const metadata = session.user.user_metadata
     const [accountInfo, setAccountInfo] = useState<UserInfo|null>(null)
-    const [userInfo, setUserInfo] = useState<AccountInfo|null>(null)
+    const [userInfo, setUserInfo] = useState<AccountInfo|null|undefined>(undefined)
     const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
     const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>(null)
     useEffect(

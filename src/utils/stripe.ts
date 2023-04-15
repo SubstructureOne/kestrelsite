@@ -8,4 +8,6 @@ const stripe = new Stripe(
     }
 )
 
+export const fundAccountUrl = "https://buy.stripe.com/test_8wMcPQclRdsd8xOdQQ"
+
 export default stripe
