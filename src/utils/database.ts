@@ -46,3 +46,12 @@ export async function getTransactions(client: Client, userId: string): Promise<T
     )
     return result.rows
 }
+
+export async function createExternalTransaction(client: Client, userId: string, amount: number): Promise<number> {
+    const result = await client.query({
+        text: "SELECT new_balance FROM add_external_deposit($1, $2)",
+        values: [userId, amount],
+        rowMode: "array",
+    })
+    return result[0][0]
+}
