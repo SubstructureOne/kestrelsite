@@ -13,6 +13,7 @@ import React from "react";
 
 type UserInfo = {
     email: string
+    name: string
     balance: number
 }
 
@@ -26,6 +27,7 @@ async function getUserInfo(session: Session): Promise<UserInfo> {
     }
     return {
         email: session.user?.email ?? "",
+        name: session.user?.user_metadata?.name,
         balance: data[0].balance
     }
 }
@@ -234,9 +236,10 @@ type MenuItems = "account-info" | "transactions" | "charges"
 type MenuProps = {
     selected: MenuItems
     setSelected: Dispatch<SetStateAction<MenuItems>>
+    userInfo: UserInfo | null | undefined
 }
 
-const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => {
+const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, userInfo}) => {
     const router = useRouter()
     const signout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -346,23 +349,23 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
             </nav>
         </div>
 
-        {/*<div className="sticky inset-x-0 bottom-0 border-t border-gray-100">*/}
-        {/*    <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">*/}
-        {/*        <img*/}
-        {/*            alt="Man"*/}
-        {/*            src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"*/}
-        {/*            className="h-10 w-10 rounded-full object-cover"*/}
-        {/*        />*/}
+        <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
+            <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
+                {/*<img*/}
+                {/*    alt="Man"*/}
+                {/*    src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"*/}
+                {/*    className="h-10 w-10 rounded-full object-cover"*/}
+                {/*/>*/}
 
-        {/*        <div>*/}
-        {/*            <p className="text-xs">*/}
-        {/*                <strong className="block font-medium">Eric Frusciante</strong>*/}
+                <div>
+                    <p className="text-xs">
+                        <strong className="block font-medium">{userInfo?.name}</strong>
 
-        {/*                <span> eric@frusciante.com </span>*/}
-        {/*            </p>*/}
-        {/*        </div>*/}
-        {/*    </a>*/}
-        {/*</div>*/}
+                        <span> {userInfo?.email} </span>
+                    </p>
+                </div>
+            </a>
+        </div>
     </div>
 }
 
@@ -376,7 +379,7 @@ function AccountInfoHtml(
     const [selected, setSelected] = useState<MenuItems>("account-info")
 
     return <div className="gap-4 flex">
-        <LeftSideMenu selected={selected} setSelected={setSelected}/>
+        <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {userInfo === null ? <PaymentBanner newUser={true}/> : (userInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
@@ -412,32 +415,17 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     )
 }
 
-const ProfileOrLogin = () => {
-    const [session, setSession] = useSession()
-    if (session) {
-        return <AccountInfoComponent session={session}/>
-    } else {
-        return <SigninForm setSession={setSession}/>
-    }
-}
-
 const Profile: NextPage = () => {
+    const [session, setSession] = useSession()
+    const title = session ? "Kestrel: Profile" : "Kestrel: Log In"
     return <>
-        <Headers title="Kestrel: Log In"/>
+        <Headers title={title}/>
         <Navigation/>
-        {/*<div className="section  wf-section">*/}
-        {/*    <div className="w-container">*/}
-                {/*<div className="w-row">*/}
-                    {/*<div className="w-col w-col-10">*/}
-                        {
-                            process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
-                                ? <ProfileOrLogin/>
-                                : <PreviewOnly/>
-                        }
-                    {/*</div>*/}
-                {/*</div>*/}
-            {/*</div>*/}
-        {/*</div>*/}
+        {
+            process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
+                ? (session ? <AccountInfoComponent session={session}/> : <SigninForm setSession={setSession}/>)
+                : <PreviewOnly/>
+        }
         <Footer/>
     </>
 }
