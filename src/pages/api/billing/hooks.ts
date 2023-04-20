@@ -31,21 +31,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         requestBuffer, sig_header, process.env.STRIPE_WEBHOOK_SECRET
     ) as Stripe.DiscriminatedEvent
 
-    if (event.type == "invoice.payment_succeeded") {
-        const invoice = event.data
-        const amount = invoice.object.amount_paid
+    if (event.type == "checkout.session.completed" || event.type == "checkout.session.async_payment_succeeded") {
+        const checkoutSession = event.data.object
+        const amount = checkoutSession.amount_subtotal
         const client = await pgconnect()
-        const userId = "userId" in invoice.object.metadata ? invoice.object.metadata["userId"] : null
+
+        const userId = checkoutSession.client_reference_id
         if (userId === null) {
             const error = "Cannot process external transaction because userId is missing from metadata"
             logger.error(error)
             res.status(400).json({error})
             return
         }
-        const newBalance = await createExternalTransaction(client, userId, amount)
-        logger.info(`Successful payment of ${amount} from user ${userId}; new balance is ${newBalance}`)
-        res.status(200).json({message: "Success"})
-        return
+        if (amount == null) {
+            const error = "Cannot process external transaction: subtotal not specified"
+            logger.error(error)
+            res.status(400).json({error})
+            return
+        }
+        if (checkoutSession.payment_status == "paid") {
+            const newBalance = await createExternalTransaction(client, userId, amount)
+            logger.info(`Successful payment of ${amount} from user ${userId}; new balance is ${newBalance}`)
+        } else {
+            logger.info(`Checkout session ${checkoutSession.id} completed but payment not completed; awaiting`)
+        }
+    } else if (event.type == "checkout.session.async_payment_failed") {
+        const checkoutSession = event.data.object
+        logger.warn(`Payment failed for checkout session ${checkoutSession.id} (${checkoutSession.amount_subtotal} from ${checkoutSession.client_reference_id}`)
     }
     res.status(200).json({message: "Success"})
 }

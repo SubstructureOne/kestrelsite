@@ -8,8 +8,8 @@ import {Session} from '@supabase/gotrue-js'
 import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
-import {fundAccountUrl} from "../utils/stripe";
 import React from "react";
+import Link from "next/link";
 
 type UserInfo = {
     email: string
@@ -98,12 +98,12 @@ const PaymentBanner: React.FC<{newUser: boolean}> = ({newUser}) => {
                 In order to use your Kestrel account, you must purchase credits.
             </h2>
 
-            <a
+            <Link
+                href="/api/txns/fund"
                 className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
-                href={fundAccountUrl}
             >
                 Purchase Credits
-            </a>
+            </Link>
         </div>
 
 }
@@ -130,8 +130,8 @@ type AccountBalanceComponentArgs = {
 
 function accountInfoTab(accountInfo: AccountInfo | null) {
     return <>
-        <a
-            href="https://buy.stripe.com/test_8wMcPQclRdsd8xOdQQ"
+        <Link
+            href="/api/txns/fund"
             className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
         >
             <h2>Account Credit</h2>
@@ -165,7 +165,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
                     />
                 </svg>
             </div>
-        </a>
+        </Link>
 
 
         <a
@@ -371,8 +371,8 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
 
 
 function AccountInfoHtml(
-    accountInfo: UserInfo | null,
-    userInfo: AccountInfo | null | undefined,
+    userInfo: UserInfo | null,
+    accountInfo: AccountInfo | null | undefined,
     chargesInfo: ChargeInfo[] | null,
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
@@ -382,8 +382,8 @@ function AccountInfoHtml(
         <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {userInfo === null ? <PaymentBanner newUser={true}/> : (userInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
-            {selected === "account-info" ? accountInfoTab(userInfo || null) : null}
+            {accountInfo === null ? <PaymentBanner newUser={true}/> : (accountInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
+            {selected === "account-info" ? accountInfoTab(accountInfo || null) : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
             {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
