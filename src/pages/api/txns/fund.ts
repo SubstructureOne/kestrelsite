@@ -1,7 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next"
 import stripe from "../../../utils/stripe"
-import {supabase} from "../../../utils/supabaseClient";
-import {userFromAuthHeader} from "../../../utils/auth";
+import {userFromAuthHeader} from "../../../utils/auth"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const user = await userFromAuthHeader(req)
@@ -28,6 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (session.url === null) {
         res.status(500).json({error: "Session URL is null"})
     } else {
-        res.redirect(303, session.url)
+        res.status(200).json({redirect: session.url})
     }
 }

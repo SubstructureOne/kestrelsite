@@ -15,6 +15,7 @@ type UserInfo = {
     email: string
     name: string
     balance: number
+    access_token: string
 }
 
 async function getUserInfo(session: Session): Promise<UserInfo> {
@@ -28,7 +29,8 @@ async function getUserInfo(session: Session): Promise<UserInfo> {
     return {
         email: session.user?.email ?? "",
         name: session.user?.user_metadata?.name,
-        balance: data[0].balance
+        balance: data[0].balance,
+        access_token: session.access_token,
     }
 }
 
@@ -128,11 +130,24 @@ type AccountBalanceComponentArgs = {
     session: Session
 }
 
-function accountInfoTab(accountInfo: AccountInfo | null) {
+function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | null) {
+    const redirect = async (event: React.MouseEvent<HTMLElement>) => {
+        if (userInfo === null) {
+            return
+        }
+        const res = await fetch("/api/txns/fund", {
+            headers: {
+                "Authorization": `Bearer ${userInfo.access_token}`
+            }
+        })
+        const json = await res.json()
+        window.location = json.redirect
+    }
     return <>
-        <Link
-            href="/api/txns/fund"
+        <a
+            href="#"
             className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
+            onClick={redirect}
         >
             <h2>Account Credit</h2>
             <div>
@@ -165,7 +180,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
                     />
                 </svg>
             </div>
-        </Link>
+        </a>
 
 
         <a
@@ -383,7 +398,7 @@ function AccountInfoHtml(
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {accountInfo === null ? <PaymentBanner newUser={true}/> : (accountInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
-            {selected === "account-info" ? accountInfoTab(accountInfo || null) : null}
+            {selected === "account-info" ? accountInfoTab(userInfo, accountInfo || null) : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
             {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
