@@ -17,14 +17,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const requestBuffer = await getRawBody(req, {limit: '1mb'});
     const sig_header = req.headers["stripe-signature"]
     if (sig_header === undefined) {
-        res.status(401).json({error: "Missing stripe-signature header"})
+        const error = "Missing stripe-signature header"
+        logger.error(error)
+        res.status(401).json({error})
         return
     } else if (Array.isArray(sig_header)) {
-        res.status(401).json({error: "Multiple stripe-signature headers specified"})
+        const error = "Multiple stripe-signature headers specified"
+        logger.error(error)
+        res.status(401).json({error})
         return
     }
     if (process.env.STRIPE_WEBHOOK_SECRET === undefined) {
-        res.status(500).json({error: "STRIPE_WEBHOOK_SECRET not specified"})
+        logger.error("STRIPE_WEBHOOK_SECRET not specified")
+        res.status(500).json({error: "Internal server error"})
         return
     }
     const event = stripe.webhooks.constructEvent(
