@@ -13,13 +13,17 @@ export async function pgconnect() {
     return client
 }
 
-export async function getuser(client: Client, user_id: string) : Promise<AccountInfo> {
+export async function getuser(client: Client, user_id: string) : Promise<AccountInfo | null> {
     const result = await client.query(
         "SELECT user_id, pg_name, user_status, balance, status_synced, created_at, updated_at" +
         " FROM users WHERE user_id = $1",
         [user_id]
     )
-    return result.rows[0]
+    if (result.rows.length > 0) {
+        return result.rows[0]
+    } else {
+        return null
+    }
 }
 
 export async function getCharges(client: Client, userId: string): Promise<ChargeInfo[]> {
@@ -41,4 +45,13 @@ export async function getTransactions(client: Client, userId: string): Promise<T
         [userId]
     )
     return result.rows
+}
+
+export async function createExternalTransaction(client: Client, userId: string, amount: number): Promise<number> {
+    const result = await client.query({
+        text: "SELECT new_balance FROM add_external_deposit($1, $2)",
+        values: [userId, amount],
+        rowMode: "array",
+    })
+    return result.rows[0][0]
 }

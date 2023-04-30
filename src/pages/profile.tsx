@@ -8,10 +8,14 @@ import {Session} from '@supabase/gotrue-js'
 import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
+import React from "react";
+import Link from "next/link";
 
 type UserInfo = {
     email: string
+    name: string
     balance: number
+    access_token: string
 }
 
 async function getUserInfo(session: Session): Promise<UserInfo> {
@@ -24,11 +28,13 @@ async function getUserInfo(session: Session): Promise<UserInfo> {
     }
     return {
         email: session.user?.email ?? "",
-        balance: data[0].balance
+        name: session.user?.user_metadata?.name,
+        balance: data[0].balance,
+        access_token: session.access_token,
     }
 }
 
-async function getAccountInfo(session: Session): Promise<AccountInfo> {
+async function getAccountInfo(session: Session): Promise<AccountInfo | null> {
     const user_id = session.user?.id
     if (user_id === undefined) {
         throw new Error("Not logged in")
@@ -41,7 +47,14 @@ async function getAccountInfo(session: Session): Promise<AccountInfo> {
             }
         }
     )
-    return await response.json()
+    if (response.ok) {
+        return await response.json()
+    } else if (response.status == 404) {
+        return null
+    } else {
+        const result = await response.json()
+        throw new Error(`Error getting account info: ${result?.error}`)
+    }
 }
 
 async function getCharges(session: Session): Promise<ChargeInfo[]> {
@@ -77,6 +90,26 @@ async function getTransactions(session: Session): Promise<TransactionInfo[]> {
 }
 
 
+const PaymentBanner: React.FC<{newUser: boolean}> = ({newUser}) => {
+    return <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
+            <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
+                {newUser ? "Initialize your account now" : "Fund your account now"}
+            </p>
+
+            <h2 className="mt-6 text-3xl font-bold">
+                In order to use your Kestrel account, you must purchase credits.
+            </h2>
+
+            <Link
+                href="/api/txns/fund"
+                className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
+            >
+                Purchase Credits
+            </Link>
+        </div>
+
+}
+
 const PreviewOnly = () => {
     return <>
         <h2>Preview-Only Mode</h2>
@@ -97,16 +130,29 @@ type AccountBalanceComponentArgs = {
     session: Session
 }
 
-function accountInfoTab(accountInfo: AccountInfo | null) {
+function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | null) {
+    const redirect = async (event: React.MouseEvent<HTMLElement>) => {
+        if (userInfo === null) {
+            return
+        }
+        const res = await fetch("/api/txns/fund", {
+            headers: {
+                "Authorization": `Bearer ${userInfo.access_token}`
+            }
+        })
+        const json = await res.json()
+        window.location = json.redirect
+    }
     return <>
         <a
             href="#"
             className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
+            onClick={redirect}
         >
-            <h2>Account Balance</h2>
+            <h2>Account Credit</h2>
             <div>
                 <h3 className="text-xl font-bold text-indigo-600">
-                    ${accountInfo === null ? "Loading...." : accountInfo.balance.toFixed(2)}
+                    ${accountInfo?.balance == null ? "Loading...." : accountInfo.balance.toFixed(2)}
                 </h3>
 
                 <div className="mt-4 border-t-2 border-gray-100 pt-4">
@@ -117,7 +163,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
             <div
                 className="mt-8 inline-flex items-center gap-2 text-indigo-600 sm:mt-6"
             >
-                <p className="font-medium sm:text-lg">Add funds</p>
+                <p className="font-medium sm:text-lg">Purchase credits</p>
 
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -143,7 +189,7 @@ function accountInfoTab(accountInfo: AccountInfo | null) {
             <h2>Postgres Info</h2>
             <div>
                 <h3 className="text-lg border-b-2 border-gray-100">
-                    {accountInfo === null ? "Loading...." : accountInfo.pg_name}
+                    {accountInfo == null ? "Loading...." : accountInfo.pg_name}
                 </h3>
 
                 {/*<div className="mt-4 border-t-2 border-gray-100 pt-4">*/}
@@ -205,9 +251,10 @@ type MenuItems = "account-info" | "transactions" | "charges"
 type MenuProps = {
     selected: MenuItems
     setSelected: Dispatch<SetStateAction<MenuItems>>
+    userInfo: UserInfo | null | undefined
 }
 
-const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => {
+const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, userInfo}) => {
     const router = useRouter()
     const signout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -317,40 +364,41 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected}) => 
             </nav>
         </div>
 
-        {/*<div className="sticky inset-x-0 bottom-0 border-t border-gray-100">*/}
-        {/*    <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">*/}
-        {/*        <img*/}
-        {/*            alt="Man"*/}
-        {/*            src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"*/}
-        {/*            className="h-10 w-10 rounded-full object-cover"*/}
-        {/*        />*/}
+        <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
+            <a href="#" className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50">
+                {/*<img*/}
+                {/*    alt="Man"*/}
+                {/*    src="https://images.unsplash.com/photo-1600486913747-55e5470d6f40?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"*/}
+                {/*    className="h-10 w-10 rounded-full object-cover"*/}
+                {/*/>*/}
 
-        {/*        <div>*/}
-        {/*            <p className="text-xs">*/}
-        {/*                <strong className="block font-medium">Eric Frusciante</strong>*/}
+                <div>
+                    <p className="text-xs">
+                        <strong className="block font-medium">{userInfo?.name}</strong>
 
-        {/*                <span> eric@frusciante.com </span>*/}
-        {/*            </p>*/}
-        {/*        </div>*/}
-        {/*    </a>*/}
-        {/*</div>*/}
+                        <span> {userInfo?.email} </span>
+                    </p>
+                </div>
+            </a>
+        </div>
     </div>
 }
 
 
 function AccountInfoHtml(
-    accountInfo: UserInfo | null,
-    userInfo: AccountInfo | null,
+    userInfo: UserInfo | null,
+    accountInfo: AccountInfo | null | undefined,
     chargesInfo: ChargeInfo[] | null,
     txnsInfo: TransactionInfo[] | null,
 ): ReactElement {
-    const router = useRouter();
     const [selected, setSelected] = useState<MenuItems>("account-info")
 
     return <div className="gap-4 flex">
-        <LeftSideMenu selected={selected} setSelected={setSelected}/>
+        <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {selected === "account-info" ? accountInfoTab(userInfo) : null}
+            {accountInfo === null ? <PaymentBanner newUser={true}/> : (accountInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
+            {selected === "account-info" ? accountInfoTab(userInfo, accountInfo || null) : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
             {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
@@ -360,8 +408,9 @@ function AccountInfoHtml(
 const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
+    const metadata = session.user.user_metadata
     const [accountInfo, setAccountInfo] = useState<UserInfo|null>(null)
-    const [userInfo, setUserInfo] = useState<AccountInfo|null>(null)
+    const [userInfo, setUserInfo] = useState<AccountInfo|null|undefined>(undefined)
     const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
     const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>(null)
     useEffect(
@@ -381,32 +430,17 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     )
 }
 
-const ProfileOrLogin = () => {
-    const [session, setSession] = useSession()
-    if (session) {
-        return <AccountInfoComponent session={session}/>
-    } else {
-        return <SigninForm setSession={setSession}/>
-    }
-}
-
 const Profile: NextPage = () => {
+    const [session, setSession] = useSession()
+    const title = session ? "Kestrel: Profile" : "Kestrel: Log In"
     return <>
-        <Headers title="Kestrel: Log In"/>
+        <Headers title={title}/>
         <Navigation/>
-        {/*<div className="section  wf-section">*/}
-        {/*    <div className="w-container">*/}
-                {/*<div className="w-row">*/}
-                    {/*<div className="w-col w-col-10">*/}
-                        {
-                            process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
-                                ? <ProfileOrLogin/>
-                                : <PreviewOnly/>
-                        }
-                    {/*</div>*/}
-                {/*</div>*/}
-            {/*</div>*/}
-        {/*</div>*/}
+        {
+            process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
+                ? (session ? <AccountInfoComponent session={session}/> : <SigninForm setSession={setSession}/>)
+                : <PreviewOnly/>
+        }
         <Footer/>
     </>
 }

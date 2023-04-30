@@ -51,7 +51,18 @@ function SignupForm() {
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         console.log(`Creating user ${email}`)
-        const { error, data: { user, session } } = await supabase.auth.signUp({email, password})
+        const { error, data: { user, session } } = await supabase.auth.signUp(
+            {
+                email,
+                password,
+                options: {
+                    data: {
+                        name,
+                        status: 'new',
+                    }
+                }
+            },
+        )
         console.log(`Error: ${error}, user: ${user}, session: ${session}`)
         if (error !== null) {
             setAlert(error.message)

@@ -1,30 +1,12 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../utils/supabaseClient'
-import Auth from '../components/Auth'
-// import Account from '../components/Account'
-// import {Session} from "@supabase/gotrue-js";
 import { NextPage } from 'next'
 import { Headers } from '../components/Headers'
 import { Navigation } from '../components/Navigation'
 import Footer from '../components/Footer'
 
 const Home: NextPage = () => {
-    // const [session, setSession] = useState<Session|null>(null)
-    //
-    // useEffect(() => {
-    //     setSession(supabase.auth.session())
-    //
-    //     supabase.auth.onAuthStateChange((_event, session) => {
-    //         setSession(session)
-    //     })
-    // }, [])
-
     return <>
         <Headers title="Kestrel: The Substructure for Open Source Software as a Service"/>
         <Navigation/>
-        {/*<div className="container" style={{ padding: '50px 0 100px 0' }}>*/}
-        {/*    {!session ? <Auth /> : <Account key={session.user?.id} session={session} />}*/}
-        {/*</div>*/}
         <div className="slider w-slider">
             <div className="mask w-slider-mask">
                 <div className="slide w-slide">
