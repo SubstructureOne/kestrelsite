@@ -53,5 +53,5 @@ export async function createExternalTransaction(client: Client, userId: string, 
         values: [userId, amount],
         rowMode: "array",
     })
-    return result[0][0]
+    return result.rows[0][0]
 }
