@@ -22,17 +22,18 @@
     "lint": "next lint"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.115",
     "@types/node": "^18.0.3",
     "@types/pg": "^8.6.6",
     "@types/react": "^18.0.15",
     "@types/webfontloader": "^1.6.34",
     "autoprefixer": "^10.4.13",
+    "aws-cdk-lib": "2.72.1",
+    "constructs": "10.1.156",
     "postcss": "^8.4.21",
+    "sst": "^2.7.2",
     "supabase": "^1.49.4",
     "tailwindcss": "^3.2.7",
-    "typescript": "^4.7.4",
-    "sst": "^2.7.2",
-    "aws-cdk-lib": "2.72.1",
-    "constructs": "10.1.156"
+    "typescript": "^4.7.4"
   }
 }

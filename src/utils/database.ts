@@ -1,5 +1,5 @@
 import { Client } from "pg"
-import {ChargeInfo, AccountInfo, TransactionInfo} from "./dbtypes"
+import {ChargeInfo, AccountInfo, TransactionInfo, ExternalTransactionInfo} from "./dbtypes"
 
 export async function pgconnect() {
     const client = new Client({
@@ -47,10 +47,10 @@ export async function getTransactions(client: Client, userId: string): Promise<T
     return result.rows
 }
 
-export async function createExternalTransaction(client: Client, userId: string, amount: number): Promise<number> {
+export async function createExternalTransaction(client: Client, exttxn: ExternalTransactionInfo): Promise<number> {
     const result = await client.query({
-        text: "SELECT new_balance FROM add_external_deposit($1, $2)",
-        values: [userId, amount],
+        text: "SELECT new_balance FROM add_external_deposit($1, $2, $3)",
+        values: [exttxn.user_id, exttxn.amount, exttxn.exttxn_extid],
         rowMode: "array",
     })
     return result.rows[0][0]

@@ -1,5 +1,5 @@
 import { SSTConfig } from "sst";
-import { NextjsSite, App } from "sst/constructs";
+import { NextjsSite, App, Queue } from "sst/constructs";
 
 const config: SSTConfig = {
   config(_input) {
@@ -10,7 +10,12 @@ const config: SSTConfig = {
   },
   stacks(app: App) {
     app.stack(function Site({stack}) {
-      const site = new NextjsSite(stack, "site");
+      const queue = new Queue(
+          stack,
+          "billingQueue",
+          {consumer: "src/functions/billingQueueConsumer.handler"}
+      );
+      const site = new NextjsSite(stack, "site", {bind: [queue]});
 
       stack.addOutputs({
         SiteUrl: site.url,

@@ -28,3 +28,11 @@ export type TransactionInfo = {
     charge_ids: number[],
     amount: number
 }
+
+export type ExternalTransactionInfo =  {
+    exttxn_id: number,
+    user_id: string,
+    amount: number,
+    exttxn_time: Date,
+    exttxn_extid: string,
+}

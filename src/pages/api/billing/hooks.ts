@@ -13,6 +13,7 @@ export const config = {
     },
 }
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const requestBuffer = await getRawBody(req, {limit: '1mb'});
     const sig_header = req.headers["stripe-signature"]
