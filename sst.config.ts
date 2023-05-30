@@ -1,15 +1,15 @@
 import { SSTConfig } from "sst";
-import { NextjsSite } from "sst/constructs";
+import { NextjsSite, App } from "sst/constructs";
 
-export default {
+const config: SSTConfig = {
   config(_input) {
     return {
       name: "kestrelsite",
       region: "us-east-1",
     };
   },
-  stacks(app) {
-    app.stack(function Site({ stack }) {
+  stacks(app: App) {
+    app.stack(function Site({stack}) {
       const site = new NextjsSite(stack, "site");
 
       stack.addOutputs({
@@ -17,4 +17,6 @@ export default {
       });
     });
   },
-} satisfies SSTConfig;
+};
+
+export default config
