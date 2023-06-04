@@ -1,7 +1,10 @@
 import { SQSEvent } from "aws-lambda"
-import {AccountInfo, NewExternalTransactionInfo} from "../utils/dbtypes";
+import {AccountInfo, NewExternalTransactionInfo, NewUserInfo} from "../utils/dbtypes";
 import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database"
-import {Client} from "pg";
+import {Client} from "pg"
+import words from "friendly-words"
+import logger from "../utils/logger"
+
 
 export async function handler(event: SQSEvent) {
     const client = await pgconnect()
@@ -21,8 +24,17 @@ async function saveTransaction(client: Client, transaction: NewExternalTransacti
 }
 
 
-async function provisionUser(client: Client, user_id: string): Promise<AccountInfo> {
-    const pgName = "hello"
-    const newUser = {user_id, pg_name: pgName}
+async function provisionUser(client: Client, userId: string): Promise<AccountInfo> {
+    const pgName = generateUsername()
+    logger.info(`Provisioning user ${userId} with postgres username ${pgName}`)
+    const newUser: NewUserInfo = {user_id: userId, pg_name: pgName}
     return await createUser(client, newUser)
+}
+
+
+function generateUsername() {
+    const { predicates, objects } = words
+    const predicate = predicates[Math.floor(Math.random() * predicates.length)]
+    const object = objects[Math.floor(Math.random() * objects.length)]
+    return `${predicate}${object}`
 }

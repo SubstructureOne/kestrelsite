@@ -6,6 +6,7 @@ import Stripe from "stripe"
 import getRawBody from "raw-body"
 import {createExternalTransaction, pgconnect} from "../../../utils/database"
 import logger from "../../../utils/logger"
+import {NewExternalTransactionInfo} from "../../../utils/dbtypes";
 
 export const config = {
     api: {
@@ -56,7 +57,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return
         }
         if (checkoutSession.payment_status == "paid") {
-            const newBalance = await createExternalTransaction(client, userId, amount)
+            const newTxn: NewExternalTransactionInfo = {
+                user_id: userId,
+                amount,
+                exttxn_extid: checkoutSession.id,
+                exttxn_time: new Date(1000 * checkoutSession.created)
+            }
+            const newBalance = await createExternalTransaction(client, newTxn)
             logger.info(`Successful payment of ${amount} from user ${userId}; new balance is ${newBalance}`)
         } else {
             logger.info(`Checkout session ${checkoutSession.id} completed but payment not completed; awaiting`)
