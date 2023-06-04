@@ -56,10 +56,19 @@ export async function createExternalTransaction(client: Client, exttxn: NewExter
     return result.rows[0][0]
 }
 
-export async function createUser(client: Client, newUser: NewUserInfo): Promise<void> {
+export async function createUser(client: Client, newUser: NewUserInfo): Promise<AccountInfo> {
     const result = await client.query({
-        text: "INSERT INTO users (user_id, pg_name, status_synced) VALUES ($1, $2, true)",
+        text: "INSERT INTO users (user_id, pg_name, status_synced) VALUES ($1, $2, true) RETURNING user_status, balance, created_at, updated_at",
         values: [newUser.user_id, newUser.pg_name],
-        rowMode: "array"
     })
+    const returned = result.rows[0]
+    return {
+        user_id: newUser.user_id,
+        pg_name: newUser.pg_name,
+        user_status: returned.user_status,
+        balance: returned.balance,
+        status_synced: true,
+        created_at: returned.created_at,
+        updated_at: returned.updated_at,
+    }
 }
