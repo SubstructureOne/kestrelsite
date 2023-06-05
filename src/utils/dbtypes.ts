@@ -28,3 +28,15 @@ export type TransactionInfo = {
     charge_ids: number[],
     amount: number
 }
+
+export type NewExternalTransactionInfo =  {
+    user_id: string,
+    amount: number,
+    exttxn_time: Date,
+    exttxn_extid: string,
+}
+
+export type NewUserInfo = {
+    user_id: string,
+    pg_name: string,
+}

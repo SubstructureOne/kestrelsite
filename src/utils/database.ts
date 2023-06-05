@@ -1,5 +1,5 @@
 import { Client } from "pg"
-import {ChargeInfo, AccountInfo, TransactionInfo} from "./dbtypes"
+import {ChargeInfo, AccountInfo, TransactionInfo, NewExternalTransactionInfo, NewUserInfo} from "./dbtypes"
 
 export async function pgconnect() {
     const client = new Client({
@@ -47,11 +47,28 @@ export async function getTransactions(client: Client, userId: string): Promise<T
     return result.rows
 }
 
-export async function createExternalTransaction(client: Client, userId: string, amount: number): Promise<number> {
+export async function createExternalTransaction(client: Client, exttxn: NewExternalTransactionInfo): Promise<number> {
     const result = await client.query({
-        text: "SELECT new_balance FROM add_external_deposit($1, $2)",
-        values: [userId, amount],
+        text: "SELECT new_balance FROM add_external_deposit($1, $2, $3)",
+        values: [exttxn.user_id, exttxn.amount, exttxn.exttxn_extid],
         rowMode: "array",
     })
     return result.rows[0][0]
+}
+
+export async function createUser(client: Client, newUser: NewUserInfo): Promise<AccountInfo> {
+    const result = await client.query({
+        text: "INSERT INTO users (user_id, pg_name, status_synced) VALUES ($1, $2, true) RETURNING user_status, balance, created_at, updated_at",
+        values: [newUser.user_id, newUser.pg_name],
+    })
+    const returned = result.rows[0]
+    return {
+        user_id: newUser.user_id,
+        pg_name: newUser.pg_name,
+        user_status: returned.user_status,
+        balance: returned.balance,
+        status_synced: true,
+        created_at: returned.created_at,
+        updated_at: returned.updated_at,
+    }
 }

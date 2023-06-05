@@ -420,7 +420,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
             getCharges(session).then((info) => setChargesInfo(info))
             getTransactions(session).then((info) => setTxnsInfo(info))
         },
-        []
+        [session]
     )
     return AccountInfoHtml(
         accountInfo,
