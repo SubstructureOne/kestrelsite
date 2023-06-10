@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 import { useSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
-import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
+import {Dispatch, FunctionComponent, MouseEventHandler, ReactElement, SetStateAction, useEffect, useState} from 'react'
 import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
 import React from "react";
@@ -14,22 +14,13 @@ import Link from "next/link";
 type UserInfo = {
     email: string
     name: string
-    balance: number
     access_token: string
 }
 
 async function getUserInfo(session: Session): Promise<UserInfo> {
-    const {data, error} = await supabase.from("balances").select("balance")
-    if (!data) {
-        throw new Error("Data not found")
-    }
-    if (error) {
-        throw error
-    }
     return {
         email: session.user?.email ?? "",
         name: session.user?.user_metadata?.name,
-        balance: data[0].balance,
         access_token: session.access_token,
     }
 }
@@ -90,7 +81,7 @@ async function getTransactions(session: Session): Promise<TransactionInfo[]> {
 }
 
 
-const PaymentBanner: React.FC<{newUser: boolean}> = ({newUser}) => {
+const PaymentBanner: React.FC<{userInfo: UserInfo | null, newUser: boolean}> = ({userInfo, newUser}) => {
     return <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
             <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
                 {newUser ? "Initialize your account now" : "Fund your account now"}
@@ -100,12 +91,13 @@ const PaymentBanner: React.FC<{newUser: boolean}> = ({newUser}) => {
                 In order to use your Kestrel account, you must purchase credits.
             </h2>
 
-            <Link
-                href="/api/txns/fund"
+            <a
+                href="#"
                 className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
+                onClick={async e => createCheckoutSession(userInfo, e)}
             >
                 Purchase Credits
-            </Link>
+            </a>
         </div>
 
 }
@@ -130,7 +122,31 @@ type AccountBalanceComponentArgs = {
     session: Session
 }
 
-function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | null) {
+async function createCheckoutSession(userInfo: UserInfo | null, event: React.MouseEvent<HTMLElement>) {
+    if (userInfo === null) {
+        return
+    }
+    const res = await fetch("/api/txns/fund", {
+        headers: {
+            "Authorization": `Bearer ${userInfo.access_token}`
+        }
+    })
+    const json = await res.json()
+    window.location = json.redirect
+}
+
+function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | null | undefined) {
+    let balance, pgName
+    if (accountInfo === undefined) {
+        balance = "Loading..."
+        pgName = "Loading..."
+    } else if (accountInfo === null) {
+        balance = "$0.00"
+        pgName = "Not Set"
+    } else {
+        balance = "$" + accountInfo.balance.toFixed(2)
+        pgName = accountInfo.pg_name
+    }
     const redirect = async (event: React.MouseEvent<HTMLElement>) => {
         if (userInfo === null) {
             return
@@ -147,12 +163,12 @@ function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | nu
         <a
             href="#"
             className="group m-4 flex flex-col justify-between rounded-sm bg-white p-4 shadow-xl transition-shadow hover:shadow-lg sm:p-6 lg:p-8"
-            onClick={redirect}
+            onClick={async e => await createCheckoutSession(userInfo, e)}
         >
             <h2>Account Credit</h2>
             <div>
                 <h3 className="text-xl font-bold text-indigo-600">
-                    ${accountInfo?.balance == null ? "Loading...." : accountInfo.balance.toFixed(2)}
+                    {balance}
                 </h3>
 
                 <div className="mt-4 border-t-2 border-gray-100 pt-4">
@@ -189,7 +205,7 @@ function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | nu
             <h2>Postgres Info</h2>
             <div>
                 <h3 className="text-lg border-b-2 border-gray-100">
-                    {accountInfo == null ? "Loading...." : accountInfo.pg_name}
+                    {pgName}
                 </h3>
 
                 {/*<div className="mt-4 border-t-2 border-gray-100 pt-4">*/}
@@ -397,8 +413,13 @@ function AccountInfoHtml(
         <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {accountInfo === null ? <PaymentBanner newUser={true}/> : (accountInfo?.user_status == "Disabled" ? <PaymentBanner newUser={false}/> : null) }
-            {selected === "account-info" ? accountInfoTab(userInfo, accountInfo || null) : null}
+            {accountInfo === null
+                ? <PaymentBanner newUser={true} userInfo={userInfo}/>
+                : (accountInfo?.user_status == "Disabled"
+                    ? <PaymentBanner newUser={false} userInfo={userInfo}/>
+                    : null)
+            }
+            {selected === "account-info" ? accountInfoTab(userInfo, accountInfo) : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
             {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
         </div>
@@ -409,22 +430,22 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
     const metadata = session.user.user_metadata
-    const [accountInfo, setAccountInfo] = useState<UserInfo|null>(null)
-    const [userInfo, setUserInfo] = useState<AccountInfo|null|undefined>(undefined)
+    const [userInfo, setUserInfo] = useState<UserInfo|null>(null)
+    const [accountInfo, setAccountInfo] = useState<AccountInfo|null|undefined>(undefined)
     const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
     const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>(null)
     useEffect(
         () => {
-            getUserInfo(session).then((info) => setAccountInfo(info))
-            getAccountInfo(session).then((info) => setUserInfo(info))
+            getUserInfo(session).then((info) => setUserInfo(info))
+            getAccountInfo(session).then((info) => setAccountInfo(info))
             getCharges(session).then((info) => setChargesInfo(info))
             getTransactions(session).then((info) => setTxnsInfo(info))
         },
         [session]
     )
     return AccountInfoHtml(
-        accountInfo,
         userInfo,
+        accountInfo,
         chargesInfo,
         txnsInfo,
     )

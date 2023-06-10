@@ -72,7 +72,7 @@ function SignupForm() {
         }
     }
     return emailSent ? CheckEmail() : <div className="bg-white">
-        <div className="lg:grid lg:min-h-screen lg:grid-cols-12 border-x-2 border-black">
+        <div className="lg:grid lg:grid-cols-12 border-x-2 border-black">
             <section
                 className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
             >

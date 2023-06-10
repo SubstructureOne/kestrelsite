@@ -12,13 +12,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         {
             line_items: [
                 {
-                    price: 'price_1MaOSHI00QV1hOn8LBQjd5sG',
+                    price: process.env.STRIPE_FUND_ACCOUNT_PRICE_ID,
                     quantity: 1,
                 }
             ],
             mode: 'payment',
-            success_url: 'http://localhost:3000/profile',
-            cancel_url: 'http://localhost:3000/profile',
+            success_url: process.env.STRIPE_FUND_ACCOUNT_SUCCESS_URL || "",
+            cancel_url: process.env.STRIPE_FUND_ACCOUNT_CANCEL_URL,
             automatic_tax: {enabled: true},
             client_reference_id: user.id,
             customer_email: user.email,
