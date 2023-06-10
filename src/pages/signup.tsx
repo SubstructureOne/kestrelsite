@@ -5,6 +5,7 @@ import {useState} from "react"
 import Footer from "../components/Footer"
 import React from "react"
 import {supabase} from "../utils/supabaseClient"
+import Link from "next/link";
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -193,9 +194,9 @@ function SignupForm() {
 
                         <div className="col-span-6">
                             <p className="text-sm text-gray-500">
-                                By creating an account, you agree to our <a href="#" className="text-gray-700 underline">
-                                terms and conditions</a> and <a href="#" className="text-gray-700 underline">privacy
-                                policy</a>.
+                                By creating an account, you agree to our
+                                <Link href="termsofuse" className="text-gray-700 underline">terms and conditions</Link>
+                                and <Link href="privacypolicy" className="text-gray-700 underline">privacy policy</Link>.
                             </p>
                         </div>
 
