@@ -36,6 +36,19 @@ export type NewExternalTransactionInfo =  {
     exttxn_extid: string,
 }
 
+export type ExternalTransactionInfo = {
+    exttransaction_id: number,
+    user_id: string,
+    amount: number,
+    exttransaction_time: Date,
+    exttransaction_extid: string,
+}
+
+export type AllTransactions = {
+    external_txns: ExternalTransactionInfo[],
+    internal_txns: TransactionInfo[],
+}
+
 export type NewUserInfo = {
     user_id: string,
     pg_name: string,

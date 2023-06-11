@@ -6,7 +6,7 @@ import { useSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
 import {Dispatch, FunctionComponent, MouseEventHandler, ReactElement, SetStateAction, useEffect, useState} from 'react'
-import {AccountInfo, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
+import {AccountInfo, AllTransactions, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
 import React from "react";
 import Link from "next/link";
@@ -64,7 +64,7 @@ async function getCharges(session: Session): Promise<ChargeInfo[]> {
     return await response.json()
 }
 
-async function getTransactions(session: Session): Promise<TransactionInfo[]> {
+async function getTransactions(session: Session): Promise<AllTransactions> {
     const user_id = session.user?.id
     if (user_id === undefined) {
         throw new Error("Not logged in")
@@ -230,7 +230,28 @@ function chargesInfoTab(chargesInfo: ChargeInfo[] | null) {
     </div>
 }
 
-function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
+function transactionsInfoTab(txnsInfo: AllTransactions | null) {
+    let internalTxnRows, externalTxnRows
+    if (txnsInfo === null) {
+        internalTxnRows = "Loading..."
+    } else if (txnsInfo.internal_txns.length === 0) {
+        internalTxnRows = <td colSpan={2}>No recent transactions</td>
+    } else {
+        internalTxnRows = txnsInfo.internal_txns.map((txn) => <tr key={txn.txn_id}>
+            <td>{new Date(txn.txn_time).toLocaleString()}</td>
+            <td>{txn.amount}</td>
+        </tr>)
+    }
+    if (txnsInfo === null) {
+        externalTxnRows = "Loading..."
+    } else if (txnsInfo.external_txns.length === 0) {
+        externalTxnRows = <td colSpan={2}>No external transactions</td>
+    } else {
+        externalTxnRows = txnsInfo.external_txns.map((txn) => <tr key={txn.exttransaction_id}>
+            <td>{txn.exttransaction_time.toLocaleString()}</td>
+            <td>${txn.amount.toFixed(2)}</td>
+        </tr>)
+    }
     return <div className="col-span-3 m-4 p-4 min-w-full">
         <h2>Recent transactions</h2>
         <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
@@ -240,12 +261,17 @@ function transactionsInfoTab(txnsInfo: TransactionInfo[] | null) {
                     <th scope="col">Amount</th>
                 </tr>
             </thead>
-            <tbody>
-                {txnsInfo === null ? "Loading..." : txnsInfo.map((txn) => <tr key={txn.txn_id}>
-                    <td>{new Date(txn.txn_time).toLocaleString()}</td>
-                    <td>{txn.amount}</td>
-                </tr>)}
-            </tbody>
+            <tbody>{internalTxnRows}</tbody>
+        </table>
+        <h2 className="my-5">External transactions</h2>
+        <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
+            <thead>
+            <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody>{externalTxnRows}</tbody>
         </table>
     </div>
 
@@ -393,7 +419,7 @@ function AccountInfoHtml(
     userInfo: UserInfo | null,
     accountInfo: AccountInfo | null | undefined,
     chargesInfo: ChargeInfo[] | null,
-    txnsInfo: TransactionInfo[] | null,
+    txnsInfo: AllTransactions | null,
 ): ReactElement {
     const [selected, setSelected] = useState<MenuItems>("account-info")
 
@@ -421,7 +447,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     const [userInfo, setUserInfo] = useState<UserInfo|null>(null)
     const [accountInfo, setAccountInfo] = useState<AccountInfo|null|undefined>(undefined)
     const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
-    const [txnsInfo, setTxnsInfo] = useState<TransactionInfo[]|null>(null)
+    const [txnsInfo, setTxnsInfo] = useState<AllTransactions|null>(null)
     useEffect(
         () => {
             getUserInfo(session).then((info) => setUserInfo(info))
