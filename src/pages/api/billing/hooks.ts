@@ -1,5 +1,7 @@
 /// <reference types="stripe-event-types" />
 
+import AWS from "aws-sdk"
+import {Queue} from "sst/node/queue"
 import {NextApiRequest, NextApiResponse} from "next"
 import stripe from "../../../utils/stripe"
 import Stripe from "stripe"
@@ -7,6 +9,8 @@ import getRawBody from "raw-body"
 import {createExternalTransaction, pgconnect} from "../../../utils/database"
 import logger from "../../../utils/logger"
 import {NewExternalTransactionInfo} from "../../../utils/dbtypes";
+
+const sqs = new AWS.SQS()
 
 export const config = {
     api: {
@@ -37,10 +41,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const event = stripe.webhooks.constructEvent(
         requestBuffer, sig_header, process.env.STRIPE_WEBHOOK_SECRET
     ) as Stripe.DiscriminatedEvent
+    logger.debug(`Retrieved request of type: ${event.type}`)
 
     if (event.type == "checkout.session.completed" || event.type == "checkout.session.async_payment_succeeded") {
         const checkoutSession = event.data.object
-        const amount = checkoutSession.amount_subtotal
+        const amount_cents = checkoutSession.amount_subtotal
         const client = await pgconnect()
 
         const userId = checkoutSession.client_reference_id
@@ -50,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(400).json({error})
             return
         }
-        if (amount == null) {
+        if (amount_cents == null) {
             const error = "Cannot process external transaction: subtotal not specified"
             logger.error(error)
             res.status(400).json({error})
@@ -59,12 +64,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (checkoutSession.payment_status == "paid") {
             const newTxn: NewExternalTransactionInfo = {
                 user_id: userId,
-                amount,
+                amount: amount_cents / 100,
                 exttxn_extid: checkoutSession.id,
                 exttxn_time: new Date(1000 * checkoutSession.created)
             }
-            const newBalance = await createExternalTransaction(client, newTxn)
-            logger.info(`Successful payment of ${amount} from user ${userId}; new balance is ${newBalance}`)
+            logger.info(`Sending message with new txn info: ${newTxn}`)
+            await sqs.sendMessage({
+                QueueUrl: Queue.billingQueue.queueUrl,
+                MessageBody: JSON.stringify(newTxn)
+            }).promise()
         } else {
             logger.info(`Checkout session ${checkoutSession.id} completed but payment not completed; awaiting`)
         }

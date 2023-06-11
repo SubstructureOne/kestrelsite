@@ -147,18 +147,6 @@ function accountInfoTab(userInfo: UserInfo | null, accountInfo: AccountInfo | nu
         balance = "$" + accountInfo.balance.toFixed(2)
         pgName = accountInfo.pg_name
     }
-    const redirect = async (event: React.MouseEvent<HTMLElement>) => {
-        if (userInfo === null) {
-            return
-        }
-        const res = await fetch("/api/txns/fund", {
-            headers: {
-                "Authorization": `Bearer ${userInfo.access_token}`
-            }
-        })
-        const json = await res.json()
-        window.location = json.redirect
-    }
     return <>
         <a
             href="#"

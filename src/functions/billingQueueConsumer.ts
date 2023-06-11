@@ -10,6 +10,7 @@ export async function handler(event: SQSEvent) {
     const client = await pgconnect()
     for (const record of event.Records) {
         const transaction: NewExternalTransactionInfo = JSON.parse(record.body)
+        logger.info(`Processing new external transaction: ${JSON.stringify(transaction)}`)
         await saveTransaction(client, transaction)
     }
 }
