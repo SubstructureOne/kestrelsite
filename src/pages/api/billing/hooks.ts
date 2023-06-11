@@ -46,8 +46,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (event.type == "checkout.session.completed" || event.type == "checkout.session.async_payment_succeeded") {
         const checkoutSession = event.data.object
         const amount_cents = checkoutSession.amount_subtotal
-        const client = await pgconnect()
-
         const userId = checkoutSession.client_reference_id
         if (userId === null) {
             const error = "Cannot process external transaction because userId is missing from metadata"

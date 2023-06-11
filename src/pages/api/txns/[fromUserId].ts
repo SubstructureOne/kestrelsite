@@ -15,11 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const client = await pgconnect()
         const txns = await getTransactions(client, fromUserId)
         const exttxns = await getExternalTransactions(client, fromUserId)
+        await client.end()
         res.status(200).json({
             external_txns: exttxns,
             internal_txns: txns,
         })
-        await client.end()
     } else {
         res
             .status(405)
