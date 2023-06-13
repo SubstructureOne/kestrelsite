@@ -64,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 user_id: userId,
                 amount: amount_cents / 100,
                 exttxn_extid: checkoutSession.id,
-                exttxn_time: new Date(1000 * checkoutSession.created)
+                exttxn_time: new Date(1000 * checkoutSession.created).toISOString()
             }
             logger.info(`Sending message with new txn info: ${newTxn}`)
             await sqs.sendMessage({

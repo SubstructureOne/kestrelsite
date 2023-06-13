@@ -4,13 +4,13 @@ export type AccountInfo = {
     user_status: string,
     balance: number,
     status_synced: boolean,
-    created_at: Date,
-    updated_at: Date,
+    created_at: string,
+    updated_at: string,
 }
 
 export type ChargeInfo = {
     charge_id: string,
-    charge_time: Date,
+    charge_time: string,
     user_id: string,
     charge_type: string,
     quantity: number,
@@ -22,7 +22,7 @@ export type ChargeInfo = {
 
 export type TransactionInfo = {
     txn_id: number,
-    txn_time: Date,
+    txn_time: string,
     from_user: string,
     to_user: string,
     charge_ids: number[],
@@ -32,7 +32,7 @@ export type TransactionInfo = {
 export type NewExternalTransactionInfo =  {
     user_id: string,
     amount: number,
-    exttxn_time: Date,
+    exttxn_time: string,
     exttxn_extid: string,
 }
 
@@ -40,7 +40,7 @@ export type ExternalTransactionInfo = {
     exttransaction_id: number,
     user_id: string,
     amount: number,
-    exttransaction_time: Date,
+    exttransaction_time: string,
     exttransaction_extid: string,
 }
 

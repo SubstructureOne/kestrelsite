@@ -2,9 +2,7 @@ import {NextPage} from "next"
 import {Headers} from "../components/Headers"
 import {Navigation} from "../components/Navigation"
 import Footer from "../components/Footer"
-import {useEffect, useRef, useState} from "react"
-import {getExternalTransactions, pgconnect} from "../utils/database"
-import {Client} from "pg"
+import {useEffect, useRef} from "react"
 import {useSession} from "../utils/supabaseClient"
 import {AllTransactions} from "../utils/dbtypes"
 
@@ -27,7 +25,7 @@ function useInterval(callback: Callback, delay: number) {
     }, [delay]);
 }
 const ConfirmPayment: NextPage = () => {
-    const [session, setSession] = useSession()
+    const [session] = useSession()
     let moreRecentThan = new Date()
     moreRecentThan.setHours(moreRecentThan.getHours() - 1)
     useInterval(() => {
@@ -42,18 +40,11 @@ const ConfirmPayment: NextPage = () => {
             )
                 .then(response => response.json())
                 .then(transactions => {
-                    console.log(`External transactions: ${JSON.stringify(transactions)}`)
-                    if ((transactions as AllTransactions).external_txns.filter(txn => txn.exttransaction_time > moreRecentThan).length > 0) {
-                        window.location = "/profile"
+                    if ((transactions as AllTransactions).external_txns.filter(txn => new Date(txn.exttransaction_time) > moreRecentThan).length > 0) {
+                        (window as Window).location = "/profile"
                     }
                 })
         }
-            // getExternalTransactions(client, session.user.id).then(transactions => {
-            //     if (transactions.filter(txn => moreRecentThan).length > 0) {
-            //         window.location = "/profile"
-            //     }
-            // })
-        // }
     }, 1000)
     return <>
         <Headers title="Kestrel Substructure: Confirm Payment"/>
