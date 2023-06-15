@@ -12,8 +12,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return
     }
     if (method == 'GET') {
-        const client = await pgconnect();
-        const userInfo = await getuser(client, id);
+        const client = await pgconnect()
+        const userInfo = await getuser(client, id)
+        await client.end()
         if (userInfo === null) {
             res.status(404).json({error: "No user account info found"})
         } else {
