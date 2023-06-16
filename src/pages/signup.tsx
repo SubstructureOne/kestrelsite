@@ -6,6 +6,7 @@ import Footer from "../components/Footer"
 import React from "react"
 import {supabase} from "../utils/supabaseClient"
 import Alert from "../components/Alert"
+import Link from "next/link"
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -72,7 +73,7 @@ function SignupForm() {
         }
     }
     return emailSent ? CheckEmail() : <div className="bg-white">
-        <div className="lg:grid lg:min-h-screen lg:grid-cols-12 border-x-2 border-black">
+        <div className="lg:grid lg:grid-cols-12 border-x-2 border-black">
             <section
                 className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
             >
@@ -186,9 +187,9 @@ function SignupForm() {
 
                         <div className="col-span-6">
                             <p className="text-sm text-gray-500">
-                                By creating an account, you agree to our <a href="#" className="text-gray-700 underline">
-                                terms and conditions</a> and <a href="#" className="text-gray-700 underline">privacy
-                                policy</a>.
+                                By creating an account, you agree to our
+                                <Link href="termsofuse" className="text-gray-700 underline">terms and conditions</Link>
+                                and <Link href="privacypolicy" className="text-gray-700 underline">privacy policy</Link>.
                             </p>
                         </div>
 
