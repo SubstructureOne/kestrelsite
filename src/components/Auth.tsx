@@ -2,6 +2,7 @@ import { Dispatch, FunctionComponent, SetStateAction, useState } from 'react'
 import { supabase } from '../utils/supabaseClient'
 import { Session } from '@supabase/gotrue-js'
 import React from "react"
+import Alert from "./Alert"
 
 type AuthProperties = {
     setSession: Dispatch<SetStateAction<Session|null>>
@@ -10,6 +11,7 @@ type AuthProperties = {
 export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [alert, setAlert] = useState('')
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -19,8 +21,8 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
         } = await supabase.auth.signInWithPassword(
             {email, password},
         )
-        if (error) {
-            throw error
+        if (error !== null) {
+            setAlert(error.message)
         }
         setSession(session)
     }
@@ -105,6 +107,8 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
         </span>
                 </div>
             </div>
+
+            {alert === '' ? <></> : <Alert alert={alert} />}
 
             <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-500">
