@@ -13,6 +13,7 @@
     "react-dom": "^18.2.0",
     "stripe": "^11.10.0",
     "stripe-event-types": "^2.3.0",
+    "true-myth": "^6.2.0",
     "tweetnacl": "^1.0.3",
     "webfontloader": "^1.6.28"
   },

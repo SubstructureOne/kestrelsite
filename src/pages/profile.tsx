@@ -5,11 +5,12 @@ import Footer from '../components/Footer'
 import { useSession, supabase } from '../utils/supabaseClient'
 import {SigninForm} from '../components/Auth'
 import {Session} from '@supabase/gotrue-js'
-import {Dispatch, FunctionComponent, MouseEventHandler, ReactElement, SetStateAction, useEffect, useState} from 'react'
-import {AccountInfo, AllTransactions, ChargeInfo, TransactionInfo} from "../utils/dbtypes"
+import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
+import {AccountInfo, AllTransactions, ChargeInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
-import React from "react";
-import Link from "next/link";
+import React from "react"
+import { Result } from 'true-myth'
+import {KestrelError} from "../utils/errors"
 
 type UserInfo = {
     email: string
@@ -17,12 +18,19 @@ type UserInfo = {
     access_token: string
 }
 
-async function getUserInfo(session: Session): Promise<UserInfo> {
-    return {
+async function getUserInfo(session: Session): Promise<Result<UserInfo, KestrelError>> {
+    const {data, error} = await supabase.from("balances").select("balance")
+    if (data === null || data.length === 0) {
+        return Result.err({friendly: "Couldn't load profile", cause: null})
+    }
+    if (error) {
+        return Result.err({friendly: "Couldn't load profile", cause: error})
+    }
+    return Result.ok({
         email: session.user?.email ?? "",
         name: session.user?.user_metadata?.name,
         access_token: session.access_token,
-    }
+    })
 }
 
 async function getAccountInfo(session: Session): Promise<AccountInfo | null> {
@@ -436,8 +444,7 @@ function AccountInfoHtml(
 const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
-    const metadata = session.user.user_metadata
-    const [userInfo, setUserInfo] = useState<UserInfo|null>(null)
+    const [userInfo, setUserInfo] = useState<Result<UserInfo,KestrelError>|null>(null)
     const [accountInfo, setAccountInfo] = useState<AccountInfo|null|undefined>(undefined)
     const [chargesInfo, setChargesInfo] = useState<ChargeInfo[]|null>(null)
     const [txnsInfo, setTxnsInfo] = useState<AllTransactions|null>(null)
@@ -451,7 +458,7 @@ const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
         [session]
     )
     return AccountInfoHtml(
-        userInfo,
+        userInfo === null ? null : userInfo.unwrapOr(null),
         accountInfo,
         chargesInfo,
         txnsInfo,
