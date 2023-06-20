@@ -201,7 +201,7 @@ function SignupForm() {
                             </button>
 
                             <p className="mt-4 text-sm text-gray-500 sm:mt-0">
-                                Already have an account? <a href="profile" className="text-gray-700 underline">Log in</a>.
+                                Already have an account? <Link href="profile" className="text-gray-700 underline">Log in</Link>
                             </p>
                         </div>
                     </form>
