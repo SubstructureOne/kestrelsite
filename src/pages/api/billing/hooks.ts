@@ -6,7 +6,6 @@ import {NextApiRequest, NextApiResponse} from "next"
 import stripe from "../../../utils/stripe"
 import Stripe from "stripe"
 import getRawBody from "raw-body"
-import {createExternalTransaction, pgconnect} from "../../../utils/database"
 import logger from "../../../utils/logger"
 import {NewExternalTransactionInfo} from "../../../utils/dbtypes";
 
