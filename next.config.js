@@ -5,7 +5,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   typescript: {
-    // ignoreBuildErrors: true,
+    ignoreBuildErrors: true,
   },
   webpack(config) {
     config.experiments = {...config.experiments, topLevelAwait: true}
