@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next"
 import {pgconnect, getuser} from "../../../utils/database"
 import {userFromAuthHeader} from "../../../utils/auth"
+import logger from "../../../utils/logger"
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -13,15 +14,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     if (method == 'GET') {
         const client = await pgconnect()
-        const userInfo = await getuser(client, id)
-        await client.end()
+        if (client.isErr) {
+            logger.error("Couldn't connect to Postgres")
+            res.status(500)
+            return
+        }
+        const userInfo = await getuser(client.value, id)
+        await client.value.end()
         if (userInfo === null) {
             res.status(404).json({error: "No user account info found"})
         } else {
             console.log(`Returning: ${JSON.stringify(userInfo)}`)
             res.status(200).json(userInfo)
         }
-        await client.end()
+        await client.value.end()
     } else {
         res
             .status(405)
