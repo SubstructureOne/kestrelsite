@@ -8,12 +8,16 @@ import logger from "../utils/logger"
 
 export async function handler(event: SQSEvent) {
     const client = await pgconnect()
+    if (client.isErr) {
+        logger.error("Couldn't connect to postgres")
+        return
+    }
     for (const record of event.Records) {
         const transaction: NewExternalTransactionInfo = JSON.parse(record.body)
         logger.info(`Processing new external transaction: ${JSON.stringify(transaction)}`)
-        await saveTransaction(client, transaction)
+        await saveTransaction(client.value, transaction)
     }
-    await client.end()
+    await client.value.end()
 }
 
 async function saveTransaction(client: Client, transaction: NewExternalTransactionInfo) {

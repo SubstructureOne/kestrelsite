@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next"
-import stripe from "../../../utils/stripe"
+import getStripe from "../../../utils/stripe"
 import {userFromAuthHeader} from "../../../utils/auth"
+import logger from "../../../utils/logger"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const user = await userFromAuthHeader(req)
@@ -8,7 +9,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(400).json({error: "Not logged in"})
         return
     }
-    const session = await stripe.checkout.sessions.create(
+    const stripe = await getStripe()
+    if (stripe.isErr) {
+        logger.error("Couldn't initialize stripe")
+        res.status(500).json({error: "Couldn't initialize stripe"})
+        return
+    }
+    const session = await stripe.value.checkout.sessions.create(
         {
             line_items: [
                 {

@@ -5,7 +5,8 @@ import {useState} from "react"
 import Footer from "../components/Footer"
 import React from "react"
 import {supabase} from "../utils/supabaseClient"
-import Link from "next/link";
+import Alert from "../components/Alert"
+import Link from "next/link"
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -113,15 +114,7 @@ function SignupForm() {
                     </div>
 
                     <form className="mt-8 grid grid-cols-6 gap-6" onSubmit={onSubmitHandler}>
-                        {alert == "" ? <></> :
-                            <div role="alert" className="rounded border-l-4 border-red-500 bg-red-50 p-4 col-span-6">
-                                <strong className="block font-medium text-red-800"> Something went wrong </strong>
-
-                                <p className="mt-2 text-sm text-red-700">
-                                    {alert}
-                                </p>
-                            </div>
-                        }
+                        {alert == "" ? <></> : <Alert alert={alert}/>}
 
                         <div className="col-span-6 sm:col-span-6">
                             <label
@@ -208,7 +201,7 @@ function SignupForm() {
                             </button>
 
                             <p className="mt-4 text-sm text-gray-500 sm:mt-0">
-                                Already have an account? <a href="profile" className="text-gray-700 underline">Log in</a>.
+                                Already have an account? <Link href="profile" className="text-gray-700 underline">Log in</Link>
                             </p>
                         </div>
                     </form>

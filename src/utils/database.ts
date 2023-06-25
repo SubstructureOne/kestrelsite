@@ -7,17 +7,24 @@ import {
     NewUserInfo,
     ExternalTransactionInfo
 } from "./dbtypes"
+import {getEnviron} from "./secrets"
+import {KResult, Ok, Err} from "./errors"
+import logger from "./logger"
 
-export async function pgconnect() {
+export async function pgconnect(): Promise<KResult<Client>> {
+    const environ = await getEnviron()
+    if (environ.isErr) {
+        return Err(environ.error)
+    }
     const client = new Client({
-        "host": process.env.POSTGRES_HOST,
-        "port": parseInt(process.env.POSTGRES_PORT || '5432'),
-        "user": process.env.POSTGRES_USER,
-        "password": process.env.POSTGRES_PASSWORD,
-        "database": process.env.POSTGRES_DATABASE,
+        "host": environ.value.POSTGRES_HOST,
+        "port": parseInt(environ.value.POSTGRES_PORT || '5432'),
+        "user": environ.value.POSTGRES_USER,
+        "password": environ.value.POSTGRES_PASSWORD,
+        "database": environ.value.POSTGRES_DATABASE,
     })
     await client.connect()
-    return client
+    return Ok(client)
 }
 
 export async function getuser(client: Client, user_id: string) : Promise<AccountInfo | null> {

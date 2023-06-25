@@ -3,12 +3,12 @@
 import AWS from "aws-sdk"
 import {Queue} from "sst/node/queue"
 import {NextApiRequest, NextApiResponse} from "next"
-import stripe from "../../../utils/stripe"
+import getStripe from "../../../utils/stripe"
 import Stripe from "stripe"
 import getRawBody from "raw-body"
-import {createExternalTransaction, pgconnect} from "../../../utils/database"
 import logger from "../../../utils/logger"
-import {NewExternalTransactionInfo} from "../../../utils/dbtypes";
+import {NewExternalTransactionInfo} from "../../../utils/dbtypes"
+import {getEnv} from "../../../utils/secrets"
 
 const sqs = new AWS.SQS()
 
@@ -33,13 +33,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(401).json({error})
         return
     }
-    if (process.env.STRIPE_WEBHOOK_SECRET === undefined) {
-        logger.error("STRIPE_WEBHOOK_SECRET not specified")
+    const stripeResult = await getStripe()
+    if (stripeResult.isErr) {
+        logger.error("Couldn't initialize stripe")
+        res.status(500).json({error: "Internal server error"})
+        return
+    }
+    const stripe = stripeResult.value
+    const webhookSecret = await getEnv("STRIPE_WEBHOOK_SECRET")
+    if (webhookSecret.isErr) {
+        logger.error("Couldn't read Stripe webhook secret")
         res.status(500).json({error: "Internal server error"})
         return
     }
     const event = stripe.webhooks.constructEvent(
-        requestBuffer, sig_header, process.env.STRIPE_WEBHOOK_SECRET
+        requestBuffer, sig_header, webhookSecret.value
     ) as Stripe.DiscriminatedEvent
     logger.debug(`Retrieved request of type: ${event.type}`)
 
