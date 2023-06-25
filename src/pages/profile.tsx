@@ -9,9 +9,9 @@ import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, us
 import {AccountInfo, AllTransactions, ChargeInfo} from "../utils/dbtypes"
 import {useRouter} from "next/router"
 import React from "react"
-import {KResult} from "../utils/errors"
-import {Result} from "true-myth"
+import {Err, Ok, KResult} from "../utils/errors"
 import Alert from "../components/Alert"
+import logger from "../utils/logger"
 
 type UserInfo = {
     email: string
@@ -27,10 +27,10 @@ async function getUserInfo(session: Session): Promise<UserInfo> {
     }
 }
 
-async function getAccountInfo(session: Session): Promise<KResult<AccountInfo | null>> {
+async function getAccountInfo(session: Session): Promise<KResult<AccountInfo|null>> {
     const user_id = session.user?.id
-    if (user_id === undefined) {
-        return Result.err({friendly: "Not logged in", cause: null})
+     if (user_id === undefined) {
+        return Err({friendly: "Not logged in", cause: null})
     }
     const response = await fetch(
         `/api/user/${user_id}`,
@@ -41,19 +41,20 @@ async function getAccountInfo(session: Session): Promise<KResult<AccountInfo | n
         }
     )
     if (response.ok) {
+        const accountInfo = await response.json()
         return await response.json()
     } else if (response.status == 404) {
-        return Result.ok(null)
+        return Ok(null)
     } else {
         const result = await response.json()
-        return Result.err({friendly: "Error getting account info", cause: result})
+        return Err({friendly: "Error getting account info", cause: result})
     }
 }
 
 async function getCharges(session: Session): Promise<KResult<ChargeInfo[]>> {
     const user_id = session.user?.id
     if (user_id === undefined) {
-        return Result.err({friendly: "Not logged in", cause: null})
+        return Err({friendly: "Not logged in", cause: null})
     }
     const response = await fetch(
         `/api/charges/${user_id}`,
@@ -65,16 +66,16 @@ async function getCharges(session: Session): Promise<KResult<ChargeInfo[]>> {
     )
     const result = await response.json()
     if (response.ok) {
-        return Result.ok(result)
+        return Ok(result)
     } else {
-        return Result.err({friendly: "Error getting charges", cause: result})
+        return Err({friendly: "Error getting charges", cause: result})
     }
 }
 
 async function getTransactions(session: Session): Promise<KResult<AllTransactions>> {
     const user_id = session.user?.id
     if (user_id === undefined) {
-        return Result.err({friendly: "Not logged in", cause: null})
+        return Err({friendly: "Not logged in", cause: null})
     }
     const response = await fetch(
         `/api/txns/${user_id}`,
@@ -86,9 +87,9 @@ async function getTransactions(session: Session): Promise<KResult<AllTransaction
     )
     const result = await response.json()
     if (response.ok) {
-        return Result.ok(result)
+        return Ok(result)
     } else {
-        return Result.err({friendly: "Error getting transactions", cause: result})
+        return Err({friendly: "Error getting transactions", cause: result})
     }
 }
 
@@ -153,7 +154,7 @@ function accountInfoTab(userInfo: UserInfo | undefined, accountInfo: KResult<Acc
         balance = "Loading..."
         pgName = "Loading..."
     } else if (accountInfo.isOk) {
-        if (accountInfo.value === null) {
+        if (accountInfo.value === null || accountInfo.value.balance === undefined) {
             balance = "$0.00"
             pgName = "Not Set"
         } else {
@@ -447,15 +448,11 @@ function AccountInfoHtml(
     txnsInfo: KResult<AllTransactions> | undefined,
 ): ReactElement {
     const [selected, setSelected] = useState<MenuItems>("account-info")
-    const showBanner = accountInfo !== undefined && accountInfo.match({
-        Ok: info => info === null || info.user_status === "Disabled",
-        Err: () => false
-    })
-    const newUser = accountInfo !== undefined && accountInfo.match({
-        Ok: info => info === null,
-        Err: () => false
-    })
-
+    const showBanner = accountInfo !== undefined && accountInfo.isOk && (
+        accountInfo.value === null
+        || accountInfo.value.user_status === "Disabled"
+    )
+    const newUser = accountInfo !== undefined && accountInfo.isOk && accountInfo.value === null
     return <div className="gap-4 flex">
         <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 

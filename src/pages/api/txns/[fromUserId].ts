@@ -18,7 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (client.isErr) {
             logger.error("Couldn't connect to Postgres")
             res.status(500)
-
             return
         }
         const txns = await getTransactions(client.value, fromUserId)

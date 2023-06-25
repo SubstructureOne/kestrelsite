@@ -19,7 +19,7 @@ export function KestrelSite({stack}: StackContext) {
             bind: [queue]
         }
     )
-
+    site.attachPermissions(["secretsmanager:GetSecretValue"])
     stack.addOutputs({
         SiteUrl: site.url,
     })

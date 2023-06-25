@@ -8,13 +8,13 @@ import {
     ExternalTransactionInfo
 } from "./dbtypes"
 import {getEnviron} from "./secrets"
-import {KResult} from "./errors"
-import {Result} from "true-myth"
+import {KResult, Ok, Err} from "./errors"
+import logger from "./logger"
 
 export async function pgconnect(): Promise<KResult<Client>> {
     const environ = await getEnviron()
     if (environ.isErr) {
-        return Result.err(environ.error)
+        return Err(environ.error)
     }
     const client = new Client({
         "host": environ.value.POSTGRES_HOST,
@@ -24,7 +24,7 @@ export async function pgconnect(): Promise<KResult<Client>> {
         "database": environ.value.POSTGRES_DATABASE,
     })
     await client.connect()
-    return Result.ok(client)
+    return Ok(client)
 }
 
 export async function getuser(client: Client, user_id: string) : Promise<AccountInfo | null> {
