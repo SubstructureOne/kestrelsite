@@ -31,7 +31,7 @@
     "@types/react": "^18.0.15",
     "@types/webfontloader": "^1.6.34",
     "autoprefixer": "^10.4.13",
-    "aws-cdk-lib": "2.72.1",
+    "aws-cdk-lib": "2.79.1",
     "constructs": "10.1.156",
     "postcss": "^8.4.21",
     "sst": "^2.7.2",
