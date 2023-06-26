@@ -23,7 +23,7 @@ export function KestrelSite({stack}: StackContext) {
                 server: {
                     vpc,
                     vpcSubnets: {
-                        subnetType: SubnetType.PUBLIC
+                        subnetType: SubnetType.PRIVATE_WITH_EGRESS
                     }
                 }
             },
