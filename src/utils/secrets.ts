@@ -2,10 +2,6 @@ import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-sec
 import {KResult, Ok, Err} from "./errors"
 import Dict = NodeJS.Dict
 
-const client = new SecretsManagerClient({ region: "us-east-1" })
-const command = new GetSecretValueCommand({
-    SecretId: `${process.env.STAGE}/kestrelsite/env`
-})
 
 export async function getEnv(key: string): Promise<KResult<string>> {
     const secrets = await getEnviron()
@@ -20,6 +16,10 @@ export async function getEnv(key: string): Promise<KResult<string>> {
 }
 
 export async function getEnviron(): Promise<KResult<Dict<string>>> {
+    const client = new SecretsManagerClient({ region: "us-east-1" })
+    const command = new GetSecretValueCommand({
+        SecretId: `${process.env.STAGE}/kestrelsite/env`
+    })
     const result = await client.send(command)
     if (result.SecretString === undefined) {
         return Err({friendly: "Secret not found", cause: null})

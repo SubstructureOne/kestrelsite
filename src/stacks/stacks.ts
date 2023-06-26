@@ -16,7 +16,10 @@ export function KestrelSite({stack}: StackContext) {
         stack,
         "kestrelsite",
         {
-            bind: [queue]
+            bind: [queue],
+            environment: {
+                "STAGE": process.env.STAGE || "",
+            }
         }
     )
     site.attachPermissions(["secretsmanager:GetSecretValue"])
