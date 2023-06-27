@@ -5,6 +5,7 @@ import logger from "../../../utils/logger"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
     const {query, method} = req
+    console.log("Received request /txns/[fromUserId]")
     const fromUserId = <string>query.fromUserId
     const user = await userFromAuthHeader(req)
     if (user?.id !== fromUserId) {

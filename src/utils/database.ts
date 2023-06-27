@@ -23,7 +23,10 @@ export async function pgconnect(): Promise<KResult<Client>> {
         "password": environ.value.POSTGRES_PASSWORD,
         "database": environ.value.POSTGRES_DATABASE,
     })
+    logger.info(client, "Connecting to postgres")
+    console.log("This is a test message")
     await client.connect()
+    console.log("Connected to postgres")
     return Ok(client)
 }
 
