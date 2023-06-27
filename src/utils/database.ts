@@ -12,7 +12,11 @@ import {KResult, Ok, Err} from "./errors"
 import logger from "./logger"
 
 export async function pgconnect(): Promise<KResult<Client>> {
+    logger.info("Retrieving environment")
+    console.log("Getting env")
     const environ = await getEnviron()
+    logger.info("Retrieved environment")
+    console.log(environ, "Got env")
     if (environ.isErr) {
         return Err(environ.error)
     }
