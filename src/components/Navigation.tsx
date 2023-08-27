@@ -44,7 +44,7 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 <div className="logo-text w-hidden-tiny w-hidden-small">Kestrel</div>
             </a>
             <nav role="navigation" className="nav-menu w-nav-menu">
-                <a href="https://docs.kestrel.codes" className={docsClasses} target="_blank">Docs</a>
+                <a href="https://docs.kestrelcodes.com" className={docsClasses} target="_blank">Docs</a>
                 <a href="/apps" className={appsClasses}>Apps</a>
                 <a
                     href="#"

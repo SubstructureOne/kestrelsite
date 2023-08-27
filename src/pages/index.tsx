@@ -18,7 +18,7 @@ const Home: NextPage = () => {
                             Deploy open source software at scale without upfront fees or upkeep.
                         </div>
                         <a
-                            href="https://docs.kestrel.codes"
+                            href="https://docs.kestrelcodes.com"
                             className="button"
                             target="_blank"
                         >
