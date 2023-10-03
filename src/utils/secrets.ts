@@ -1,4 +1,4 @@
-import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager"
+// import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager"
 import {KResult, Ok, Err} from "./errors"
 import Dict = NodeJS.Dict
 
@@ -16,13 +16,14 @@ export async function getEnv(key: string): Promise<KResult<string>> {
 }
 
 export async function getEnviron(): Promise<KResult<Dict<string>>> {
-    const client = new SecretsManagerClient({ region: "us-east-1" })
-    const command = new GetSecretValueCommand({
-        SecretId: `${process.env.STAGE}/kestrelsite/env`
-    })
-    const result = await client.send(command)
-    if (result.SecretString === undefined) {
-        return Err({friendly: "Secret not found", cause: null})
-    }
-    return Ok(JSON.parse(result.SecretString))
+    return new Promise((resolve, _reject) => resolve(Ok(process.env)));
+    // const client = new SecretsManagerClient({ region: "us-east-1" })
+    // const command = new GetSecretValueCommand({
+    //     SecretId: `${process.env.STAGE}/kestrelsite/env`
+    // })
+    // const result = await client.send(command)
+    // if (result.SecretString === undefined) {
+    //     return Err({friendly: "Secret not found", cause: null})
+    // }
+    // return Ok(JSON.parse(result.SecretString))
 }
