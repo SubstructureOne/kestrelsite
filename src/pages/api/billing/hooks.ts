@@ -9,6 +9,7 @@ import getRawBody from "raw-body"
 import logger from "../../../utils/logger"
 import {NewExternalTransactionInfo} from "../../../utils/dbtypes"
 import {getEnv} from "../../../utils/secrets"
+import {billingEventHandler} from "../../../functions/billingQueueConsumer"
 
 const sqs = new AWS.SQS()
 
@@ -75,10 +76,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 exttxn_time: new Date(1000 * checkoutSession.created).toISOString()
             }
             logger.info(`Sending message with new txn info: ${newTxn}`)
-            await sqs.sendMessage({
-                QueueUrl: Queue.billingQueue.queueUrl,
-                MessageBody: JSON.stringify(newTxn)
-            }).promise()
+            // await sqs.sendMessage({
+            //     QueueUrl: Queue.billingQueue.queueUrl,
+            //     MessageBody: JSON.stringify(newTxn)
+            // }).promise()
+            await billingEventHandler(newTxn);
         } else {
             logger.info(`Checkout session ${checkoutSession.id} completed but payment not completed; awaiting`)
         }

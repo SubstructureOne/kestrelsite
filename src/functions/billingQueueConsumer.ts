@@ -20,6 +20,17 @@ export async function handler(event: SQSEvent) {
     await client.value.end()
 }
 
+
+export async function billingEventHandler(txn: NewExternalTransactionInfo) {
+    const client = await pgconnect();
+    if (client.isErr) {
+        logger.error("Couldn't connect to postgres");
+        return;
+    }
+    await saveTransaction(client.value, txn);
+    await client.value.end();
+}
+
 async function saveTransaction(client: Client, transaction: NewExternalTransactionInfo) {
     const userInfo = await getuser(client, transaction.user_id)
     if (userInfo === null) {
