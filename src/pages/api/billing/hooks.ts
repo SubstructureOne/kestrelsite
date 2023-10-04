@@ -1,7 +1,7 @@
 /// <reference types="stripe-event-types" />
 
 import AWS from "aws-sdk"
-import {Queue} from "sst/node/queue"
+// import {Queue} from "sst/node/queue"
 import {NextApiRequest, NextApiResponse} from "next"
 import getStripe from "../../../utils/stripe"
 import Stripe from "stripe"
