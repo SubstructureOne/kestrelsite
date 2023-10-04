@@ -41,8 +41,8 @@ async function getAccountInfo(session: Session): Promise<KResult<AccountInfo|nul
         }
     )
     if (response.ok) {
-        const accountInfo = await response.json()
-        return await response.json()
+        const accountInfo: AccountInfo = await response.json()
+        return Ok(accountInfo)
     } else if (response.status == 404) {
         return Ok(null)
     } else {
