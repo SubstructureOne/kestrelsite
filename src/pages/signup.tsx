@@ -7,6 +7,9 @@ import React from "react"
 import {supabase} from "../utils/supabaseClient"
 import Alert from "../components/Alert"
 import Link from "next/link"
+import PasswordGenerator from "generate-password";
+import {encryptData} from "../utils/encrypt"
+import {toBase64} from "pvutils"
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -51,9 +54,20 @@ function SignupForm() {
     const [alert, setAlert] = useState("")
     const [emailSent, setEmailSent] = useState(false)
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        console.log(`Creating user ${email}`)
-        const { error, data: { user, session } } = await supabase.auth.signUp(
+        // While we have the user's password, generate a secondary random
+        // password they will use to access postgres, and encrypt it with their
+        // chosen password.
+        const pgPassword = PasswordGenerator.generate({
+            length: 16,
+            numbers: true,
+            symbols: false,
+            lowercase: true,
+            uppercase: true,
+            exclude: " ",
+        });
+        const encryptedPgPassword = await encryptData(pgPassword, password);
+        const encryptedPgPasswordB64 = Buffer.from(encryptedPgPassword).toString("base64");
+        const { error } = await supabase.auth.signUp(
             {
                 email,
                 password,
@@ -61,15 +75,15 @@ function SignupForm() {
                     data: {
                         name,
                         status: 'new',
+                        encryptedPgPasswordB64,
                     }
                 }
             },
         )
-        console.log(`Error: ${error}, user: ${user}, session: ${session}`)
         if (error !== null) {
             setAlert(error.message)
         } else {
-            setEmailSent(true)
+            setEmailSent(true);
         }
     }
     return emailSent ? CheckEmail() : <div className="bg-white">

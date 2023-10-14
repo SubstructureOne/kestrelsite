@@ -42,7 +42,7 @@ async function saveTransaction(client: Client, transaction: NewExternalTransacti
 
 
 async function provisionUser(client: Client, userId: string): Promise<AccountInfo> {
-    const pgName = generateUsername()
+    const pgName = generateUsername();
     logger.info(`Provisioning user ${userId} with postgres username ${pgName}`)
     const newUser: NewUserInfo = {user_id: userId, pg_name: pgName}
     return await createUser(client, newUser)
