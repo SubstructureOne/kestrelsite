@@ -21,7 +21,7 @@ const deriveKey = (passwordKey: CryptoKey, salt: Uint8Array, keyUsages: KeyUsage
         keyUsages
     );
 
-export async function encryptData(secretData: string, password: string): Promise<Uint8Array> {
+export async function encryptDataWithPassword(secretData: string, password: string): Promise<Uint8Array> {
     const salt = window.crypto.getRandomValues(new Uint8Array(16));
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
     const passwordKey = await getPasswordKey(password);

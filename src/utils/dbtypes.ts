@@ -52,4 +52,5 @@ export type AllTransactions = {
 export type NewUserInfo = {
     user_id: string,
     pg_name: string,
+    pg_password_enc: Uint8Array,
 }

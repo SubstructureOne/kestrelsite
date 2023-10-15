@@ -149,17 +149,17 @@ async function createCheckoutSession(userInfo: UserInfo | undefined) {
 }
 
 function accountInfoTab(userInfo: UserInfo | undefined, accountInfo: KResult<AccountInfo | null> | undefined) {
-    let balance, pgName
+    let balance, pgName;
     if (accountInfo === undefined) {
-        balance = "Loading..."
-        pgName = "Loading..."
+        balance = "Loading...";
+        pgName = "Loading...";
     } else if (accountInfo.isOk) {
         if (accountInfo.value === null || accountInfo.value.balance === undefined) {
-            balance = "$0.00"
-            pgName = "Not Set"
+            balance = "$0.00";
+            pgName = "Not Set";
         } else {
-            balance = "$" + accountInfo.value.balance.toFixed(2)
-            pgName = accountInfo.value.pg_name
+            balance = "$" + accountInfo.value.balance.toFixed(2);
+            pgName = accountInfo.value.pg_name;
         }
     } else {
         balance = "error"

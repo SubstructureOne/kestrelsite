@@ -3,7 +3,10 @@ import {AccountInfo, NewExternalTransactionInfo, NewUserInfo} from "../utils/dbt
 import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database"
 import {Client} from "pg"
 import words from "friendly-words"
-import logger from "../utils/logger"
+
+import PasswordGenerator from "generate-password";
+import {encryptDataWithKey} from "../utils/encrypt_server";
+import logger from "../utils/logger";
 
 
 export async function handler(event: SQSEvent) {
@@ -43,8 +46,9 @@ async function saveTransaction(client: Client, transaction: NewExternalTransacti
 
 async function provisionUser(client: Client, userId: string): Promise<AccountInfo> {
     const pgName = generateUsername();
+    const pgPasswordEnc = generateEncryptedPassword();
     logger.info(`Provisioning user ${userId} with postgres username ${pgName}`)
-    const newUser: NewUserInfo = {user_id: userId, pg_name: pgName}
+    const newUser: NewUserInfo = {user_id: userId, pg_name: pgName, pg_password_enc: pgPasswordEnc}
     return await createUser(client, newUser)
 }
 
@@ -54,4 +58,19 @@ function generateUsername() {
     const predicate = predicates[Math.floor(Math.random() * predicates.length)]
     const object = objects[Math.floor(Math.random() * objects.length)]
     return `${predicate}${object}`
+}
+
+function generateEncryptedPassword(): Uint8Array {
+    const password = PasswordGenerator.generate({
+        length: 16,
+        numbers: true,
+        symbols: false,
+        lowercase: true,
+        uppercase: true,
+        exclude: " ",
+    });
+    const pgpassKeyB64 = process.env.PGPASS_KEY_B64;
+    const binaryKey = Buffer.from(pgpassKeyB64 || "", "base64");
+    btoa
+    return encryptDataWithKey(password, binaryKey);
 }

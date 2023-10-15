@@ -8,7 +8,7 @@ import {supabase} from "../utils/supabaseClient"
 import Alert from "../components/Alert"
 import Link from "next/link"
 import PasswordGenerator from "generate-password";
-import {encryptData} from "../utils/encrypt"
+import {encryptDataWithPassword} from "../utils/encrypt"
 import {toBase64} from "pvutils"
 
 const SignUpFlow: NextPage = () => {
@@ -35,12 +35,12 @@ function CheckEmail() {
 
             <p className="mt-4 text-gray-500">Check your email for your sign-in link.</p>
 
-            <a
+            <Link
                 href="/"
                 className="inline-block px-5 py-3 mt-6 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring"
             >
                 Go Back Home
-            </a>
+            </Link>
         </div>
     </div>
 }
@@ -65,7 +65,7 @@ function SignupForm() {
             uppercase: true,
             exclude: " ",
         });
-        const encryptedPgPassword = await encryptData(pgPassword, password);
+        const encryptedPgPassword = await encryptDataWithPassword(pgPassword, password);
         const encryptedPgPasswordB64 = Buffer.from(encryptedPgPassword).toString("base64");
         const { error } = await supabase.auth.signUp(
             {
