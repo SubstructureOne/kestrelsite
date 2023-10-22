@@ -149,18 +149,21 @@ async function createCheckoutSession(userInfo: UserInfo | undefined) {
 }
 
 function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined, accountInfo: KResult<AccountInfo | null> | undefined}) {
-    let balance, pgName;
+    let balance, pgName, pgPassword;
     const [blurred, setBlurred] = useState(true);
     if (accountInfo === undefined) {
         balance = "Loading...";
         pgName = "Loading...";
+        pgPassword = "Loading...";
     } else if (accountInfo.isOk) {
         if (accountInfo.value === null || accountInfo.value.balance === undefined) {
             balance = "$0.00";
             pgName = "Not Set";
+            pgPassword = "Not Set";
         } else {
             balance = "$" + accountInfo.value.balance.toFixed(2);
             pgName = accountInfo.value.pg_name;
+            pgPassword = accountInfo.value.pg_password;
         }
     } else {
         balance = "error"
@@ -223,7 +226,7 @@ function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined
                     className="text-lg border-b-2 border-grey-100"
                     style={blurred ? {color: "transparent", textShadow: "0 0 12px rgba(0,0,0,0.5)"} : {}}
                 >
-                    Password goes here
+                    {blurred ? "Click icon to reveal" : pgPassword}
                 </h3>
                 <div
                     className="absolute inset-y-0 right-0 pr-3 pb-8 flex items-center text-sm leading-5"

@@ -47,14 +47,10 @@ async function saveTransaction(client: Client, transaction: NewExternalTransacti
 
 async function provisionUser(client: Client, userId: string): Promise<KResult<AccountInfo>> {
     const pgName = generateUsername();
-    const pgPasswordEnc = generateEncryptedPassword();
+    const pgPassword = generatePassword();
     logger.info(`Provisioning user ${userId} with postgres username ${pgName}`);
-    if (pgPasswordEnc.isErr) {
-        logger.error("Couldn't provision user", {userId});
-        return Err({friendly: "Couldn't provision user", cause: pgPasswordEnc});
-    }
-    const newUser: NewUserInfo = {user_id: userId, pg_name: pgName, pg_password_enc: pgPasswordEnc.value};
-    return Ok(await createUser(client, newUser));
+    const newUser: NewUserInfo = {user_id: userId, pg_name: pgName, pg_password: pgPassword};
+    return await createUser(client, newUser);
 }
 
 
@@ -65,8 +61,8 @@ function generateUsername() {
     return `${predicate}${object}`;
 }
 
-function generateEncryptedPassword(): KResult<Uint8Array> {
-    const password = PasswordGenerator.generate({
+function generatePassword(): string {
+    return PasswordGenerator.generate({
         length: 16,
         numbers: true,
         symbols: false,
@@ -74,10 +70,4 @@ function generateEncryptedPassword(): KResult<Uint8Array> {
         uppercase: true,
         exclude: " ",
     });
-    const pgpassKeyB64 = process.env.PGPASS_KEY_B64;
-    if (pgpassKeyB64 === undefined) {
-        return Err({friendly: "Postgres encryption key not defined"})
-    }
-    const binaryKey = Buffer.from(pgpassKeyB64, "base64");
-    return Ok(encryptDataWithKey(password, binaryKey));
 }

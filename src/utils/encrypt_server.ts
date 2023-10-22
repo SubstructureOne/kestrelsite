@@ -1,5 +1,7 @@
 import crypto from "node:crypto";
 
+import {Err, KResult, Ok} from "./errors";
+
 export function encryptDataWithKey(secretData: string, key: Uint8Array): Uint8Array {
     const algorithm = 'aes-256-gcm';
     const iv = crypto.randomBytes(16);
