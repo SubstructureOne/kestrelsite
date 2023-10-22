@@ -20,7 +20,7 @@
     "webfontloader": "^1.6.28"
   },
   "scripts": {
-    "dev": "sst bind next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
