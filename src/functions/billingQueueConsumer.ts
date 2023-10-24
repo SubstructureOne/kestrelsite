@@ -37,7 +37,11 @@ export async function billingEventHandler(txn: NewExternalTransactionInfo) {
 
 async function saveTransaction(client: Client, transaction: NewExternalTransactionInfo) {
     const userInfo = await getuser(client, transaction.user_id);
-    if (userInfo === null) {
+    if (userInfo.isErr) {
+        logger.error("Couldn't retrieve user info");
+        return;
+    }
+    if (userInfo.value === null) {
         // user has not yet been provisioned
         await provisionUser(client, transaction.user_id);
     }

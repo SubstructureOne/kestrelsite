@@ -28,16 +28,35 @@ export async function pgconnect(): Promise<KResult<Client>> {
     return Ok(client)
 }
 
-export async function getuser(client: Client, user_id: string) : Promise<AccountInfo | null> {
-    const result = await client.query(
-        "SELECT user_id, pg_name, user_status, balance, status_synced, created_at, updated_at, pg_password_enc" +
-        " FROM users WHERE user_id = $1",
-        [user_id]
-    )
+export async function getuser(client: Client, user_id: string) : Promise<KResult<AccountInfo | null>> {
+    let result;
+    try {
+        result = await client.query(
+            "SELECT user_id, pg_name, user_status, balance, status_synced, created_at, updated_at, pg_password_enc" +
+            " FROM users WHERE user_id = $1",
+            [user_id]
+        )
+    } catch (err) {
+        return Err({friendly: "User query failed"});
+    }
     if (result.rows.length > 0) {
-        return result.rows[0]
+        const row = result.rows[0];
+        const pgPassword = decryptPassword(row["pg_password_enc"]);
+        if (pgPassword.isErr) {
+            return Err({friendly: "Could not decrypt postgres password", reason: pgPassword});
+        }
+        return Ok({
+            user_id: row["user_id"],
+            balance: row["balance"],
+            created_at: row["created_at"],
+            updated_at: row["updated_at"],
+            pg_name: row["pg_name"],
+            pg_password: pgPassword.value,
+            status_synced: row["status_synced"],
+            user_status: row["user_status"],
+        });
     } else {
-        return null
+        return Ok(null);
     }
 }
 
