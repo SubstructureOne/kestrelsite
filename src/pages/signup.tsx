@@ -57,16 +57,16 @@ function SignupForm() {
         // While we have the user's password, generate a secondary random
         // password they will use to access postgres, and encrypt it with their
         // chosen password.
-        const pgPassword = PasswordGenerator.generate({
-            length: 16,
-            numbers: true,
-            symbols: false,
-            lowercase: true,
-            uppercase: true,
-            exclude: " ",
-        });
-        const encryptedPgPassword = await encryptDataWithPassword(pgPassword, password);
-        const encryptedPgPasswordB64 = Buffer.from(encryptedPgPassword).toString("base64");
+        // const pgPassword = PasswordGenerator.generate({
+        //     length: 16,
+        //     numbers: true,
+        //     symbols: false,
+        //     lowercase: true,
+        //     uppercase: true,
+        //     exclude: " ",
+        // });
+        // const encryptedPgPassword = await encryptDataWithPassword(pgPassword, password);
+        // const encryptedPgPasswordB64 = Buffer.from(encryptedPgPassword).toString("base64");
         const { error } = await supabase.auth.signUp(
             {
                 email,
@@ -75,7 +75,7 @@ function SignupForm() {
                     data: {
                         name,
                         status: 'new',
-                        encryptedPgPasswordB64,
+                        // encryptedPgPasswordB64,
                     }
                 }
             },
