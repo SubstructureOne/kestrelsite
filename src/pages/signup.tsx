@@ -67,6 +67,7 @@ function SignupForm() {
         // });
         // const encryptedPgPassword = await encryptDataWithPassword(pgPassword, password);
         // const encryptedPgPasswordB64 = Buffer.from(encryptedPgPassword).toString("base64");
+        event.preventDefault();
         const { error } = await supabase.auth.signUp(
             {
                 email,
