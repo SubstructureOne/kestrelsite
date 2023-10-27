@@ -1,13 +1,13 @@
 import { SQSEvent } from "aws-lambda"
-import {AccountInfo, NewExternalTransactionInfo, NewUserInfo} from "../utils/dbtypes";
-import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database"
 import {Client} from "pg"
 import words from "friendly-words"
 
 import PasswordGenerator from "generate-password";
-import {encryptDataWithKey} from "../utils/encrypt_server";
-import {KResult, Ok, Err} from "../utils/errors";
+import {KResult, Err} from "../utils/errors";
 import logger from "../utils/logger";
+import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database"
+import {AccountInfo, NewExternalTransactionInfo, NewUserInfo} from "../utils/dbtypes";
+import {managed_pgconnect, provisionManagedUser} from "../utils/managed_db";
 
 
 export async function handler(event: SQSEvent) {
@@ -52,9 +52,27 @@ async function saveTransaction(client: Client, transaction: NewExternalTransacti
 async function provisionUser(client: Client, userId: string): Promise<KResult<AccountInfo>> {
     const pgName = generateUsername();
     const pgPassword = generatePassword();
-    logger.info(`Provisioning user ${userId} with postgres username ${pgName}`);
     const newUser: NewUserInfo = {user_id: userId, pg_name: pgName, pg_password: pgPassword};
-    return await createUser(client, newUser);
+    logger.info({newUser}, `Provisioning user`);
+    const createUserResult = await createUser(client, newUser);
+    if (createUserResult.isErr) {
+        const message = "Couldn't create user row in impulse database";
+        logger.error(message);
+        return Err({friendly: message, cause: createUserResult});
+    }
+    const managedClient = await managed_pgconnect();
+    if (managedClient.isErr) {
+        const message = "Couldn't connect to managed postgres";
+        logger.error(message);
+        return Err({friendly: message, cause: managedClient});
+    }
+    const provisionManagedResult = await provisionManagedUser(managedClient.value, newUser);
+    if (provisionManagedResult.isErr) {
+        const message = "Couldn't provision managed user";
+        logger.error(message);
+        return Err({friendly: message, cause: provisionManagedResult});
+    }
+    return createUserResult;
 }
 
 

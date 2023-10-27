@@ -109,11 +109,17 @@ export async function createUser(client: Client, newUser: NewUserInfo): Promise<
         logger.error("Couldn't encrypt Postgres password");
         return Err({friendly: "Couldn't encrypt Postgres password", cause: encryptedPassword});
     }
-    const result = await client.query({
-        text: "INSERT INTO users (user_id, pg_name, pg_password_enc, status_synced) VALUES ($1, $2, $3, true) RETURNING user_status, balance, created_at, updated_at",
-        values: [newUser.user_id, newUser.pg_name, encryptedPassword.value],
-    });
+    let result;
+    try {
+        result = await client.query({
+            text: "INSERT INTO users (user_id, pg_name, pg_password_enc, status_synced) VALUES ($1, $2, $3, true) RETURNING user_status, balance, created_at, updated_at",
+            values: [newUser.user_id, newUser.pg_name, encryptedPassword.value],
+        });
+    } catch (error) {
+        return Err({friendly: "Couldn't create user row", cause: error instanceof Error ? error.message : String(error)});
+    }
     const returned = result.rows[0];
+
     return Ok({
         user_id: newUser.user_id,
         pg_name: newUser.pg_name,
@@ -146,3 +152,5 @@ export function decryptPassword(encrypted: Uint8Array): KResult<string> {
     const binaryKey = Buffer.from(keyB64, "base64");
     return Ok(decryptDataWithKey(encrypted, binaryKey));
 }
+
+
