@@ -10,12 +10,29 @@ export async function managed_pgconnect(): Promise<KResult<Client>> {
     if (environ.isErr) {
         return Err({friendly: "Couldn't initialize environ to connect to managed db", cause: environ});
     }
+    const host = environ.value.MANAGED_PG_HOST;
+    const port = parseInt(environ.value.MANAGED_PG_PORT || "5432");
+    const user = environ.value.MANAGED_PG_USER;
+    const password = environ.value.MANAGED_PG_PASSWORD;
+    if (host === undefined) {
+        const message = "Managed PG password is not set";
+        logger.error(message)
+        return Err({friendly: message});
+    } else if (user === undefined) {
+        const message = "Managed PG user is not set";
+        logger.error(message);
+        return Err({friendly: message});
+    } else if (password === undefined) {
+        const message = "Managed PG password is not set";
+        logger.error(message);
+        return Err({friendly: message});
+    }
     const client = new Client({
-        "host": environ.value.MANAGED_PG_HOST,
-        "port": parseInt(environ.value.MANAGED_PG_PORT || '5432'),
-        "user": environ.value.MANAGED_PG_USER,
-        "password": environ.value.MANAGED_PG_PASSWORD,
-        "database": environ.value.MANAGED_PG_USER,
+        host,
+        port,
+        user,
+        password,
+        database: user,
     });
     await client.connect();
     return Ok(client);
