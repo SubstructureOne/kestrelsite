@@ -34,7 +34,13 @@ export async function managed_pgconnect(): Promise<KResult<Client>> {
         password,
         database: user,
     });
-    await client.connect();
+    try {
+        await client.connect();
+    } catch (error) {
+        const message = "Connection to managed PG failed";
+        logger.error(message);
+        return Err({friendly: message});
+    }
     return Ok(client);
 }
 
