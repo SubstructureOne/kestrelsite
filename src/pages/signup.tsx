@@ -7,6 +7,9 @@ import React from "react"
 import {supabase} from "../utils/supabaseClient"
 import Alert from "../components/Alert"
 import Link from "next/link"
+import PasswordGenerator from "generate-password";
+import {encryptDataWithPassword} from "../utils/encrypt"
+import {toBase64} from "pvutils"
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -32,12 +35,12 @@ function CheckEmail() {
 
             <p className="mt-4 text-gray-500">Check your email for your sign-in link.</p>
 
-            <a
+            <Link
                 href="/"
                 className="inline-block px-5 py-3 mt-6 text-sm font-medium text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring"
             >
                 Go Back Home
-            </a>
+            </Link>
         </div>
     </div>
 }
@@ -51,9 +54,8 @@ function SignupForm() {
     const [alert, setAlert] = useState("")
     const [emailSent, setEmailSent] = useState(false)
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        console.log(`Creating user ${email}`)
-        const { error, data: { user, session } } = await supabase.auth.signUp(
+        event.preventDefault();
+        const { error } = await supabase.auth.signUp(
             {
                 email,
                 password,
@@ -65,11 +67,10 @@ function SignupForm() {
                 }
             },
         )
-        console.log(`Error: ${error}, user: ${user}, session: ${session}`)
         if (error !== null) {
             setAlert(error.message)
         } else {
-            setEmailSent(true)
+            setEmailSent(true);
         }
     }
     return emailSent ? CheckEmail() : <div className="bg-white">

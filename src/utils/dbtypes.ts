@@ -6,6 +6,7 @@ export type AccountInfo = {
     status_synced: boolean,
     created_at: string,
     updated_at: string,
+    pg_password: string,
 }
 
 export type ChargeInfo = {
@@ -52,4 +53,5 @@ export type AllTransactions = {
 export type NewUserInfo = {
     user_id: string,
     pg_name: string,
+    pg_password: string,
 }
