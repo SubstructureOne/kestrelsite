@@ -272,7 +272,7 @@ function chargesInfoTab(chargesInfo: KResult<ChargeInfo[]> | undefined) {
                     <th scope="col">Time</th>
                     <th scope="col">Type</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Transacted</th>
+                    {/*<th scope="col">Transacted</th>*/}
                 </tr>
                 </thead>
                 <tbody>
@@ -280,7 +280,7 @@ function chargesInfoTab(chargesInfo: KResult<ChargeInfo[]> | undefined) {
                     <td>{new Date(charge.charge_time).toLocaleString()}</td>
                     <td>{charge.charge_type}</td>
                     <td>${(charge.amount || 0).toLocaleString([], {minimumFractionDigits: 2})}</td>
-                    <td>{charge.transacted.toString()}</td>
+                    {/*<td>{charge.transacted.toString()}</td>*/}
                 </tr>)}
                 </tbody>
             </table>

@@ -80,10 +80,10 @@ export async function getChargesByDay(
             SELECT DATE_TRUNC('day', charge_time) AS charge_time, user_id, charge_type, sum(amount)
             FROM charges
             WHERE user_id = $1
-            AND ($2 IS NULL or charge_type >= $2)
-            AND ($3 IS NULL OR charge_type <= $3)
+            AND ($2::timestamp IS NULL or charge_time >= $2)
+            AND ($3::timestamp IS NULL OR charge_time <= $3)
             GROUP BY user_id, charge_type, DATE_TRUNC('day', charge_time)
-            ORDER BY charge_time ASC
+            ORDER BY charge_time DESC
         `,
         [userId, startTime, endTime]
     )
