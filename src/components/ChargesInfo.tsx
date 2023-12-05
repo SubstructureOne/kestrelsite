@@ -44,10 +44,6 @@ export const options = {
     },
     scales: {
         x: {
-            type: "time",
-            time: {
-                unit: "day",
-            },
             stacked: true,
         },
         y: {

@@ -319,16 +319,16 @@ function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
             </tr>)
         }
         allTxnInfo = <>
-            <h2>Recent transactions</h2>
-            <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
-                <thead>
-                <tr>
-                    <th scope="col">Time</th>
-                    <th scope="col">Amount</th>
-                </tr>
-                </thead>
-                <tbody>{internalTxnRows}</tbody>
-            </table>
+            {/*<h2>Recent transactions</h2>*/}
+            {/*<table className="min-w-full divide-y-2 divide-gray-200 text-sm">*/}
+            {/*    <thead>*/}
+            {/*    <tr>*/}
+            {/*        <th scope="col">Time</th>*/}
+            {/*        <th scope="col">Amount</th>*/}
+            {/*    </tr>*/}
+            {/*    </thead>*/}
+            {/*    <tbody>{internalTxnRows}</tbody>*/}
+            {/*</table>*/}
             <h2 className="my-5">External transactions</h2>
             <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
                 <thead>
