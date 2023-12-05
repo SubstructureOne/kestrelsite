@@ -20,12 +20,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(500)
             return
         }
-        const txns = await getTransactions(client.value, fromUserId)
+        // const txns = await getTransactions(client.value, fromUserId)
         const exttxns = await getExternalTransactions(client.value, fromUserId)
         await client.value.end()
         res.status(200).json({
             external_txns: exttxns,
-            internal_txns: txns,
+            internal_txns: [],
         })
     } else {
         res

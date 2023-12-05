@@ -69,6 +69,27 @@ export async function getCharges(client: Client, userId: string): Promise<Charge
     return result.rows
 }
 
+export async function getChargesByDay(
+        client: Client,
+        userId: string,
+        startTime: string | null,
+        endTime: string | null
+): Promise<ChargeInfo[]> {{
+    const result = await client.query(
+        `
+            SELECT DATE_TRUNC('day', charge_time) AS charge_time, user_id, charge_type, sum(amount) as amount
+            FROM charges
+            WHERE user_id = $1
+            AND ($2::timestamp IS NULL or charge_time >= $2)
+            AND ($3::timestamp IS NULL OR charge_time <= $3)
+            GROUP BY user_id, charge_type, DATE_TRUNC('day', charge_time)
+            ORDER BY charge_time DESC
+        `,
+        [userId, startTime, endTime]
+    )
+    return result.rows;
+}}
+
 export async function getTransactions(client: Client, userId: string): Promise<TransactionInfo[]> {
     const result = await client.query(
         `
@@ -77,9 +98,10 @@ export async function getTransactions(client: Client, userId: string): Promise<T
             WHERE from_user = $1
         `,
         [userId]
-    )
-    return result.rows
+    );
+    return result.rows;
 }
+
 
 export async function getExternalTransactions(client: Client, userId: string): Promise<ExternalTransactionInfo[]> {
 

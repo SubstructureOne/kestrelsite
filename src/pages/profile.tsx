@@ -12,6 +12,7 @@ import React from "react"
 import {Err, Ok, KResult} from "../utils/errors"
 import Alert from "../components/Alert"
 import logger from "../utils/logger"
+import {ChargesInfoTab} from "../components/ChargesInfo"
 
 type UserInfo = {
     email: string
@@ -272,7 +273,7 @@ function chargesInfoTab(chargesInfo: KResult<ChargeInfo[]> | undefined) {
                     <th scope="col">Time</th>
                     <th scope="col">Type</th>
                     <th scope="col">Amount</th>
-                    <th scope="col">Transacted</th>
+                    {/*<th scope="col">Transacted</th>*/}
                 </tr>
                 </thead>
                 <tbody>
@@ -280,7 +281,7 @@ function chargesInfoTab(chargesInfo: KResult<ChargeInfo[]> | undefined) {
                     <td>{new Date(charge.charge_time).toLocaleString()}</td>
                     <td>{charge.charge_type}</td>
                     <td>${(charge.amount || 0).toLocaleString([], {minimumFractionDigits: 2})}</td>
-                    <td>{charge.transacted.toString()}</td>
+                    {/*<td>{charge.transacted.toString()}</td>*/}
                 </tr>)}
                 </tbody>
             </table>
@@ -318,16 +319,16 @@ function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
             </tr>)
         }
         allTxnInfo = <>
-            <h2>Recent transactions</h2>
-            <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
-                <thead>
-                <tr>
-                    <th scope="col">Time</th>
-                    <th scope="col">Amount</th>
-                </tr>
-                </thead>
-                <tbody>{internalTxnRows}</tbody>
-            </table>
+            {/*<h2>Recent transactions</h2>*/}
+            {/*<table className="min-w-full divide-y-2 divide-gray-200 text-sm">*/}
+            {/*    <thead>*/}
+            {/*    <tr>*/}
+            {/*        <th scope="col">Time</th>*/}
+            {/*        <th scope="col">Amount</th>*/}
+            {/*    </tr>*/}
+            {/*    </thead>*/}
+            {/*    <tbody>{internalTxnRows}</tbody>*/}
+            {/*</table>*/}
             <h2 className="my-5">External transactions</h2>
             <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
                 <thead>
@@ -500,7 +501,8 @@ function AccountInfoHtml(
             }
             {selected === "account-info" ? <AccountInfoTab userInfo={userInfo} accountInfo={accountInfo}/>  : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
-            {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
+            {/*{selected === "charges" ? chargesInfoTab(chargesInfo) : null}*/}
+            {selected === "charges" ? ChargesInfoTab(chargesInfo) : null}
         </div>
     </div>
 }
