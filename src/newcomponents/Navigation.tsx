@@ -1,34 +1,20 @@
-import { FunctionComponent, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+"use client"
+
+import { FunctionComponent } from 'react'
+import {usePathname} from 'next/navigation'
 
 type NavigationProps = {
 }
 
 export const Navigation: FunctionComponent<NavigationProps> = () => {
-    const router = useRouter()
+    const pathname = usePathname();
     const defaultClasses = "nav-link w-nav-link"
     const profileClasses = "nav-link w-inline-block social-icons"
     const socialIcons = profileClasses + " w-hidden-small w-hidden-tiny"
     const currentTabAppend = " w--current"
-    const [docsClasses, setDocsClasses] = useState(defaultClasses)
-    const [appsClasses, setAppsClasses] = useState(defaultClasses)
-    useEffect(
-        () => {
-            if (!router.isReady) return;
-            switch (router.pathname) {
-                case "/docs":
-                    setDocsClasses(defaultClasses + currentTabAppend)
-                    break
-                case "/apps":
-                    setAppsClasses(defaultClasses + currentTabAppend)
-                    break
-                // case "/contact":
-                //     setContactClasses(defaultClasses + currentTabAppend)
-                //     break
-            }
-        },
-        [router.isReady],
-    )
+
+    const docsClasses = pathname === "/docs" ? defaultClasses + currentTabAppend : defaultClasses;
+    const appsClasses = pathname === "/apps" ? defaultClasses + currentTabAppend : defaultClasses;
     return <div role="banner" className="navbar w-nav">
         <div className="w-container">
             <a href="/" className="brand w-clearfix w-nav-brand w--current">
