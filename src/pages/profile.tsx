@@ -12,6 +12,7 @@ import React from "react"
 import {Err, Ok, KResult} from "../utils/errors"
 import Alert from "../components/Alert"
 import logger from "../utils/logger"
+import {ChargesInfoTab} from "../components/ChargesInfo"
 
 type UserInfo = {
     email: string
@@ -500,7 +501,8 @@ function AccountInfoHtml(
             }
             {selected === "account-info" ? <AccountInfoTab userInfo={userInfo} accountInfo={accountInfo}/>  : null}
             {selected === "transactions" ? transactionsInfoTab(txnsInfo) : null}
-            {selected === "charges" ? chargesInfoTab(chargesInfo) : null}
+            {/*{selected === "charges" ? chargesInfoTab(chargesInfo) : null}*/}
+            {selected === "charges" ? ChargesInfoTab(chargesInfo) : null}
         </div>
     </div>
 }

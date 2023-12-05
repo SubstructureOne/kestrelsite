@@ -77,7 +77,7 @@ export async function getChargesByDay(
 ): Promise<ChargeInfo[]> {{
     const result = await client.query(
         `
-            SELECT DATE_TRUNC('day', charge_time) AS charge_time, user_id, charge_type, sum(amount)
+            SELECT DATE_TRUNC('day', charge_time) AS charge_time, user_id, charge_type, sum(amount) as amount
             FROM charges
             WHERE user_id = $1
             AND ($2::timestamp IS NULL or charge_time >= $2)
