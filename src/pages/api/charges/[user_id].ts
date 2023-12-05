@@ -1,6 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {userFromAuthHeader} from "../../../utils/auth";
 import {getChargesByDay, pgconnect} from "../../../utils/database";
+import {createClient} from "../../../utils/supabase/server";
 import logger from "../../../utils/logger";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
