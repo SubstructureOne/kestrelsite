@@ -2,8 +2,8 @@ import {redirect} from "next/navigation";
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-import { Headers } from '../../newcomponents/Headers';
-import { Navigation } from '../../newcomponents/Navigation';
+import { Headers } from '../../components/Headers';
+import { Navigation } from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import {supabaseUrl, supabaseAnonKey} from '../../utils/supabaseClient';
 import AccountInfoComponent from "./AccountInfoComponent";

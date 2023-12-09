@@ -1,8 +1,8 @@
 "use client"
 
-import {SigninForm} from "../../newcomponents/Auth"
-import {Headers} from "../../newcomponents/Headers"
-import {Navigation} from "../../newcomponents/Navigation"
+import {SigninForm} from "../../components/Auth"
+import {Headers} from "../../components/Headers"
+import {Navigation} from "../../components/Navigation"
 import React from "react"
 import Footer from "../../components/Footer"
 

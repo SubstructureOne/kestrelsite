@@ -1,7 +1,7 @@
 import {NextPage} from "next"
 
-import {Headers} from "../../newcomponents/Headers"
-import {Navigation} from "../../newcomponents/Navigation"
+import {Headers} from "../../components/Headers"
+import {Navigation} from "../../components/Navigation"
 import Footer from "../../components/Footer"
 
 const PrivacyPolicy: NextPage = () => {
