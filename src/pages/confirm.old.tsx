@@ -5,6 +5,7 @@ import Footer from "../components/Footer"
 import {useEffect, useRef} from "react"
 import {useSession} from "../utils/supabaseClient"
 import {AllTransactions} from "../utils/dbtypes"
+import {createClient} from "../utils/supabase/client"
 
 
 type Callback = () => void
@@ -25,6 +26,8 @@ function useInterval(callback: Callback, delay: number) {
     }, [delay]);
 }
 const ConfirmPayment: NextPage = () => {
+    const supabase = createClient();
+    supabase.auth.getSession()
     const [session] = useSession()
     let moreRecentThan = new Date()
     moreRecentThan.setHours(moreRecentThan.getHours() - 1)
