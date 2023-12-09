@@ -6,6 +6,7 @@ import {AccountInfo, AllTransactions, ChargeInfo} from "../../utils/dbtypes"
 import {ChargesInfoTab} from "../../components/ChargesInfo"
 import Alert from "../../components/Alert"
 import {Session} from "@supabase/gotrue-js"
+import Link from "next/link"
 
 type UserInfo = {
     email: string
@@ -383,7 +384,7 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                     <span className="text-sm font-medium hidden md:inline"> Charges </span>
                 </a>
 
-                <a
+                <Link
                     href="/signout"
                     className={unselectedClasses}
                 >
@@ -403,7 +404,7 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                     </svg>
 
                     <span className="text-sm font-medium hidden md:inline"> Sign Out </span>
-                </a>
+                </Link>
             </nav>
         </div>
 
