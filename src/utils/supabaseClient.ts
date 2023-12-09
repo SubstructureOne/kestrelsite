@@ -1,5 +1,4 @@
-import {createClient, Session} from "@supabase/supabase-js"
-// import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import {createClient} from "@supabase/supabase-js"
 
 
 export const supabaseUrl: string = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
