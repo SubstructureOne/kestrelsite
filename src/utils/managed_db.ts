@@ -1,8 +1,8 @@
 import {Client} from "pg";
 
-import {NewUserInfo} from "./dbtypes"
+import {NewUserInfo} from "./dbtypes";
 import {KResult, Ok, Err} from "./errors";
-import logger from "./logger"
+import logger from "./logger";
 import {getEnviron} from "./secrets";
 
 export async function managed_pgconnect(): Promise<KResult<Client>> {
@@ -16,7 +16,7 @@ export async function managed_pgconnect(): Promise<KResult<Client>> {
     const password = environ.value.MANAGED_PG_PASSWORD;
     if (host === undefined) {
         const message = "Managed PG password is not set";
-        logger.error(message)
+        logger.error(message);
         return Err({friendly: message});
     } else if (user === undefined) {
         const message = "Managed PG user is not set";

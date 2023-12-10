@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { FunctionComponent } from 'react'
-import {usePathname} from 'next/navigation'
+import { FunctionComponent } from 'react';
+import {usePathname} from 'next/navigation';
 import Image from "next/image";
 
 import kestrelTransparent from "../images/kestrel_transparent.png";
@@ -10,14 +10,14 @@ import twitterIcon from "../images/twitter-icon.svg";
 import githubLight from "../images/GitHub-Mark-Light-32px.png";
 
 type NavigationProps = {
-}
+};
 
 export const Navigation: FunctionComponent<NavigationProps> = () => {
     const pathname = usePathname();
-    const defaultClasses = "nav-link w-nav-link"
-    const profileClasses = "nav-link w-inline-block social-icons"
-    const socialIcons = profileClasses + " w-hidden-small w-hidden-tiny"
-    const currentTabAppend = " w--current"
+    const defaultClasses = "nav-link w-nav-link";
+    const profileClasses = "nav-link w-inline-block social-icons";
+    const socialIcons = profileClasses + " w-hidden-small w-hidden-tiny";
+    const currentTabAppend = " w--current";
 
     const docsClasses = pathname === "/docs" ? defaultClasses + currentTabAppend : defaultClasses;
     const appsClasses = pathname === "/apps" ? defaultClasses + currentTabAppend : defaultClasses;
@@ -67,6 +67,6 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                 <div className="menu-icon w-icon-nav-menu"></div>
             </div>
         </div>
-    </div>
-}
+    </div>;
+};
 

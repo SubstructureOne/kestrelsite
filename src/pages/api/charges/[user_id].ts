@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .json({
                 error: `Requested user (${userId}) does not match logged in user (${user?.id}`
             });
-        return
+        return;
     }
     if (method == 'GET') {
         const client = await pgconnect();
