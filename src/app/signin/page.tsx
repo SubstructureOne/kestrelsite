@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import {SigninForm} from "../../components/Auth"
-import {Headers} from "../../components/Headers"
-import {Navigation} from "../../components/Navigation"
-import React from "react"
-import Footer from "../../components/Footer"
+import {SigninForm} from "../../components/Auth";
+import {Headers} from "../../components/Headers";
+import {Navigation} from "../../components/Navigation";
+import React from "react";
+import Footer from "../../components/Footer";
 
 export default function SigninPage() {
     return <>
@@ -12,5 +12,5 @@ export default function SigninPage() {
         <Navigation/>
         <SigninForm/>
         <Footer/>
-    </>
+    </>;
 }

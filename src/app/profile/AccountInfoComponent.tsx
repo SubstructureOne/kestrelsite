@@ -1,31 +1,31 @@
-"use client"
+"use client";
 
-import React, {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from "react"
-import {Err, KResult, Ok} from "../../utils/errors"
-import {AccountInfo, AllTransactions, ChargeInfo} from "../../utils/dbtypes"
-import {ChargesInfoTab} from "../../components/ChargesInfo"
-import Alert from "../../components/Alert"
-import {Session} from "@supabase/gotrue-js"
-import Link from "next/link"
+import React, {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from "react";
+import {Err, KResult, Ok} from "../../utils/errors";
+import {AccountInfo, AllTransactions, ChargeInfo} from "../../utils/dbtypes";
+import {ChargesInfoTab} from "../../components/ChargesInfo";
+import Alert from "../../components/Alert";
+import {Session} from "@supabase/gotrue-js";
+import Link from "next/link";
 
 type UserInfo = {
     email: string
     name: string
     access_token: string
-}
+};
 
 async function getUserInfo(session: Session): Promise<UserInfo> {
     return {
         email: session.user.email ?? "",
         name: session.user.user_metadata.name,
         access_token: session.access_token,
-    }
+    };
 }
 
 async function getAccountInfo(session: Session): Promise<KResult<AccountInfo|null>> {
-    const user_id = session.user?.id
+    const user_id = session.user?.id;
     if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
+        return Err({friendly: "Not logged in", cause: null});
     }
     const response = await fetch(
         `/api/user/${user_id}`,
@@ -34,22 +34,22 @@ async function getAccountInfo(session: Session): Promise<KResult<AccountInfo|nul
                 Authorization: `Bearer ${session.access_token}`
             }
         }
-    )
+    );
     if (response.ok) {
-        const accountInfo: AccountInfo = await response.json()
-        return Ok(accountInfo)
+        const accountInfo: AccountInfo = await response.json();
+        return Ok(accountInfo);
     } else if (response.status == 404) {
-        return Ok(null)
+        return Ok(null);
     } else {
-        const result = await response.json()
-        return Err({friendly: "Error getting account info", cause: result})
+        const result = await response.json();
+        return Err({friendly: "Error getting account info", cause: result});
     }
 }
 
 async function getCharges(session: Session): Promise<KResult<ChargeInfo[]>> {
-    const user_id = session.user?.id
+    const user_id = session.user?.id;
     if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
+        return Err({friendly: "Not logged in", cause: null});
     }
     const response = await fetch(
         `/api/charges/${user_id}`,
@@ -58,19 +58,19 @@ async function getCharges(session: Session): Promise<KResult<ChargeInfo[]>> {
                 Authorization: `Bearer ${session.access_token}`
             }
         }
-    )
-    const result = await response.json()
+    );
+    const result = await response.json();
     if (response.ok) {
-        return Ok(result)
+        return Ok(result);
     } else {
-        return Err({friendly: "Error getting charges", cause: result})
+        return Err({friendly: "Error getting charges", cause: result});
     }
 }
 
 async function getTransactions(session: Session): Promise<KResult<AllTransactions>> {
-    const user_id = session.user?.id
+    const user_id = session.user?.id;
     if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
+        return Err({friendly: "Not logged in", cause: null});
     }
     const response = await fetch(
         `/api/txns/${user_id}`,
@@ -79,12 +79,12 @@ async function getTransactions(session: Session): Promise<KResult<AllTransaction
                 Authorization: `Bearer ${session.access_token}`
             }
         }
-    )
-    const result = await response.json()
+    );
+    const result = await response.json();
     if (response.ok) {
-        return Ok(result)
+        return Ok(result);
     } else {
-        return Err({friendly: "Error getting transactions", cause: result})
+        return Err({friendly: "Error getting transactions", cause: result});
     }
 }
 
@@ -106,24 +106,24 @@ const PaymentBanner: React.FC<{userInfo: UserInfo | undefined, newUser: boolean}
         >
             Purchase Credits
         </a>
-    </div>
-}
+    </div>;
+};
 
 type AccountBalanceComponentArgs = {
     session: Session
-}
+};
 
 async function createCheckoutSession(userInfo: UserInfo | undefined) {
     if (userInfo === undefined) {
-        return
+        return;
     }
     const res = await fetch("/api/txns/fund", {
         headers: {
             "Authorization": `Bearer ${userInfo.access_token}`
         }
-    })
-    const json = await res.json()
-    window.location = json.redirect
+    });
+    const json = await res.json();
+    window.location = json.redirect;
 }
 
 function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined, accountInfo: KResult<AccountInfo | null> | undefined}) {
@@ -144,8 +144,8 @@ function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined
             pgPassword = accountInfo.value.pg_password;
         }
     } else {
-        balance = "error"
-        pgName = "error"
+        balance = "error";
+        pgName = "error";
     }
     return <>
         <a
@@ -234,34 +234,34 @@ function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined
             </div>
 
         </a>
-    </>
+    </>;
 }
 
 function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
-    let allTxnInfo
+    let allTxnInfo;
     if (txnsInfo !== undefined && txnsInfo.isErr) {
-        allTxnInfo = <Alert alert={txnsInfo.error.friendly} />
+        allTxnInfo = <Alert alert={txnsInfo.error.friendly} />;
     } else {
-        let internalTxnRows, externalTxnRows
+        let internalTxnRows, externalTxnRows;
         if (txnsInfo === undefined) {
-            internalTxnRows = "Loading..."
+            internalTxnRows = "Loading...";
         } else if (txnsInfo.value.internal_txns.length === 0) {
-            internalTxnRows = <td colSpan={2}>No recent transactions</td>
+            internalTxnRows = <td colSpan={2}>No recent transactions</td>;
         } else {
             internalTxnRows = txnsInfo.value.internal_txns.map((txn) => <tr key={txn.txn_id}>
                 <td>{new Date(txn.txn_time).toLocaleString()}</td>
                 <td>{txn.amount}</td>
-            </tr>)
+            </tr>);
         }
         if (txnsInfo === undefined) {
-            externalTxnRows = "Loading..."
+            externalTxnRows = "Loading...";
         } else if (txnsInfo.value.external_txns.length === 0) {
-            externalTxnRows = <td colSpan={2}>No external transactions</td>
+            externalTxnRows = <td colSpan={2}>No external transactions</td>;
         } else {
             externalTxnRows = txnsInfo.value.external_txns.map((txn) => <tr key={txn.exttransaction_id}>
                 <td>{txn.exttransaction_time.toLocaleString()}</td>
                 <td>${txn.amount.toFixed(2)}</td>
-            </tr>)
+            </tr>);
         }
         allTxnInfo = <>
             {/*<h2>Recent transactions</h2>*/}
@@ -284,29 +284,29 @@ function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
                 </thead>
                 <tbody>{externalTxnRows}</tbody>
             </table>
-        </>
+        </>;
     }
     return <div className="col-span-3 m-4 p-4 min-w-full">
         {allTxnInfo}
-    </div>
+    </div>;
 
 }
 
 
-type MenuItems = "account-info" | "transactions" | "charges"
+type MenuItems = "account-info" | "transactions" | "charges";
 type MenuProps = {
     selected: MenuItems
     setSelected: Dispatch<SetStateAction<MenuItems>>
     userInfo: UserInfo | undefined
-}
+};
 
 const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, userInfo}) => {
     const userInfoSection = (userInfo !== undefined) ? <p className="text-xs">
         <strong className="block font-medium">{userInfo.name}</strong>
         <span> {userInfo.email} </span>
-    </p> : <p></p>
-    const selectedClasses = "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700"
-    const unselectedClasses = "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+    </p> : <p></p>;
+    const selectedClasses = "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700";
+    const unselectedClasses = "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700";
     return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
             <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
@@ -415,8 +415,8 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                 </div>
             </a>
         </div>
-    </div>
-}
+    </div>;
+};
 
 
 function AccountInfoHtml(
@@ -425,12 +425,12 @@ function AccountInfoHtml(
     chargesInfo: KResult<ChargeInfo[]> | undefined,
     txnsInfo: KResult<AllTransactions> | undefined,
 ): ReactElement {
-    const [selected, setSelected] = useState<MenuItems>("account-info")
+    const [selected, setSelected] = useState<MenuItems>("account-info");
     const showBanner = accountInfo !== undefined && accountInfo.isOk && (
         accountInfo.value === null
         || accountInfo.value.user_status === "Disabled"
-    )
-    const newUser = accountInfo !== undefined && accountInfo.isOk && accountInfo.value === null
+    );
+    const newUser = accountInfo !== undefined && accountInfo.isOk && accountInfo.value === null;
     return <div className="gap-4 flex">
         <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 
@@ -444,32 +444,32 @@ function AccountInfoHtml(
             {/*{selected === "charges" ? chargesInfoTab(chargesInfo) : null}*/}
             {selected === "charges" ? ChargesInfoTab(chargesInfo) : null}
         </div>
-    </div>
+    </div>;
 }
 
 
 const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
     {session}
 ) => {
-    const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined)
-    const [accountInfo, setAccountInfo] = useState<KResult<AccountInfo|null>|undefined>(undefined)
-    const [chargesInfo, setChargesInfo] = useState<KResult<ChargeInfo[]>|undefined>(undefined)
-    const [txnsInfo, setTxnsInfo] = useState<KResult<AllTransactions>|undefined>(undefined)
+    const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined);
+    const [accountInfo, setAccountInfo] = useState<KResult<AccountInfo|null>|undefined>(undefined);
+    const [chargesInfo, setChargesInfo] = useState<KResult<ChargeInfo[]>|undefined>(undefined);
+    const [txnsInfo, setTxnsInfo] = useState<KResult<AllTransactions>|undefined>(undefined);
     useEffect(
         () => {
-            getUserInfo(session).then((info) => setUserInfo(info))
-            getAccountInfo(session).then((info) => setAccountInfo(info))
-            getCharges(session).then((info) => setChargesInfo(info))
-            getTransactions(session).then((info) => setTxnsInfo(info))
+            getUserInfo(session).then((info) => setUserInfo(info));
+            getAccountInfo(session).then((info) => setAccountInfo(info));
+            getCharges(session).then((info) => setChargesInfo(info));
+            getTransactions(session).then((info) => setTxnsInfo(info));
         },
         [session]
-    )
+    );
     return AccountInfoHtml(
         userInfo,
         accountInfo,
         chargesInfo,
         txnsInfo,
-    )
-}
+    );
+};
 
 export default AccountInfoComponent;

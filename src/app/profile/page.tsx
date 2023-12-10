@@ -7,7 +7,7 @@ import { Navigation } from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import {supabaseUrl, supabaseAnonKey} from '../../utils/supabaseClient';
 import AccountInfoComponent from "./AccountInfoComponent";
-import React from "react"
+import React from "react";
 
 
 const PreviewOnly = () => {
@@ -23,8 +23,8 @@ const PreviewOnly = () => {
         </a> on Twitter to get the latest project updates and get notified when
             the Kestrel substructure goes live for public beta.
         </p>
-    </>
-}
+    </>;
+};
 
 
 const Profile = async () => {
@@ -44,7 +44,7 @@ const Profile = async () => {
     );
     const {data} = await supabase.auth.getSession();
     const session = data.session;
-    console.log(`My session is ${JSON.stringify(session)}`)
+    console.log(`My session is ${JSON.stringify(session)}`);
     if (session === null) {
         redirect("/signin");
     }
@@ -58,7 +58,7 @@ const Profile = async () => {
                 : <PreviewOnly/>
         }
         <Footer/>
-    </>
-}
+    </>;
+};
 
-export default Profile
+export default Profile;

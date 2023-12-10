@@ -1,8 +1,8 @@
-import {NextPage} from "next"
+import {NextPage} from "next";
 
-import {Headers} from "../../components/Headers"
-import {Navigation} from "../../components/Navigation"
-import Footer from "../../components/Footer"
+import {Headers} from "../../components/Headers";
+import {Navigation} from "../../components/Navigation";
+import Footer from "../../components/Footer";
 
 const TermsOfUse: NextPage = () => {
     return <>
@@ -91,7 +91,7 @@ const TermsOfUse: NextPage = () => {
             <p className="my-5">Effective as of February 23, 2023</p>
         </div>
         <Footer/>
-    </>
-}
+    </>;
+};
 
-export default TermsOfUse
+export default TermsOfUse;

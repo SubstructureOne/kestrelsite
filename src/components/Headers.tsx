@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import React, { FunctionComponent, useEffect } from 'react'
+import React, { FunctionComponent, useEffect } from 'react';
 // import WebFont from 'webfontloader'
 
 type HeadersProps = {
     title: string
-}
+};
 
 export const Headers: FunctionComponent<HeadersProps> = ({title}) => {
     useEffect(
         () => {
-            const WebFont = require('webfontloader')
+            const WebFont = require('webfontloader');
             WebFont.load({
                 google: {
                     families: [
@@ -19,10 +19,10 @@ export const Headers: FunctionComponent<HeadersProps> = ({title}) => {
                         "Roboto:300,regular,500"
                     ]
                 }
-            })
+            });
         },
         []
-    )
+    );
     return <>
         <meta charSet="utf-8" />
         <title>{title}</title>
@@ -41,5 +41,5 @@ export const Headers: FunctionComponent<HeadersProps> = ({title}) => {
         <meta name="msapplication-TileColor" content="#da532c"/>
         <meta name="theme-color" content="black"/>
         <script src="https://js.stripe.com/v3/" async></script>
-    </>
-}
+    </>;
+};

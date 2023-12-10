@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { FunctionComponent, useState } from 'react'
-import { supabaseUrl, supabaseAnonKey } from '../utils/supabaseClient'
-import React from "react"
-import Alert from "./Alert"
-import {createBrowserClient} from "@supabase/ssr"
-import {useRouter} from "next/navigation"
+import { FunctionComponent, useState } from 'react';
+import { supabaseUrl, supabaseAnonKey } from '../utils/supabaseClient';
+import React from "react";
+import Alert from "./Alert";
+import {createBrowserClient} from "@supabase/ssr";
+import {useRouter} from "next/navigation";
 
 type AuthProperties = {
-}
+};
 
 export const SigninForm: FunctionComponent<AuthProperties> = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [alert, setAlert] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [alert, setAlert] = useState('');
     const router = useRouter();
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+        event.preventDefault();
         const {
             data: { session },
             error,
         } = await supabase.auth.signInWithPassword(
             {email, password},
-        )
+        );
         if (error === null) {
             router.push("/profile");
         } else {
-            setAlert(error.message)
+            setAlert(error.message);
         }
-    }
+    };
 
     return <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg text-center">
@@ -129,6 +129,6 @@ export const SigninForm: FunctionComponent<AuthProperties> = () => {
                 </button>
             </div>
         </form>
-    </div>
+    </div>;
 
-}
+};

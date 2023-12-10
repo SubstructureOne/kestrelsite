@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import {createBrowserClient} from "@supabase/ssr"
-import {supabaseAnonKey, supabaseUrl} from "../../utils/supabaseClient"
-import {useRouter} from "next/navigation"
+import {createBrowserClient} from "@supabase/ssr";
+import {supabaseAnonKey, supabaseUrl} from "../../utils/supabaseClient";
+import {useRouter} from "next/navigation";
 
 export default function Signout() {
     const supabase = createBrowserClient(
@@ -11,5 +11,5 @@ export default function Signout() {
     );
     const router = useRouter();
     supabase.auth.signOut().then(() => router.push("/"));
-    return "Signing out..."
+    return "Signing out...";
 }

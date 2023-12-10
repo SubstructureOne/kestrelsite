@@ -1,8 +1,8 @@
-import React from "react"
+import React from "react";
 
 type AlertProps = {
     alert: string
-}
+};
 
 const Alert: React.FC<AlertProps> = ({alert}) => {
     return <div role="alert" className="rounded border-l-4 border-red-500 bg-red-50 p-4 col-span-6">
@@ -11,7 +11,7 @@ const Alert: React.FC<AlertProps> = ({alert}) => {
         <p className="mt-2 text-sm text-red-700">
             {alert}
         </p>
-    </div>
-}
+    </div>;
+};
 
-export default Alert
+export default Alert;
