@@ -19,6 +19,7 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "sharp": "^0.33.0",
     "stripe": "^11.10.0",
     "stripe-event-types": "^2.3.0",
     "tweetnacl": "^1.0.3",

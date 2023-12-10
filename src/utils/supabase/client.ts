@@ -1,7 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr'
 import {Session} from "@supabase/supabase-js"
 import {Dispatch, SetStateAction, useEffect, useState} from "react"
-import {supabase} from "../supabaseClient"
 
 export const createClient = () =>
     createBrowserClient(
@@ -12,9 +11,9 @@ export const createClient = () =>
 
 export function useSession(): [Session|null, Dispatch<SetStateAction<Session|null>>] {
     const [session, setSession] = useState<Session|null>(null)
-    const client = createClient();
     useEffect(
         () => {
+            const client = createClient();
             client.auth.getSession().then(({data}) => setSession(data.session))
         },
         []

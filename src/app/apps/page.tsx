@@ -1,7 +1,11 @@
 import { NextPage } from 'next'
+import Image from "next/image";
+
 import { Headers } from '../../components/Headers'
 import { Navigation } from '../../components/Navigation'
 import Footer from '../../components/Footer'
+import kestrelPhotosScreenshot from "./kestrelphotos_screenshot.png";
+import githubLogoLight from "./GitHub-Mark-32px.png";
 
 const Apps: NextPage = () => {
     return <>
@@ -38,14 +42,14 @@ const Apps: NextPage = () => {
                             className="button solid"
                             target="_blank"
                         >
-                            <img src="/images/GitHub-Mark-32px.png" height="20px" alt="" />
+                            <Image src={githubLogoLight} alt="Github logo" style={{width: 18, height: 18}} />
                             &nbsp;
                             Source
                         </a>
                     </div>
                     <div className="project-column w-col w-col-8">
-                        <img
-                            src="/images/kestrelphotos_screenshot.png"
+                        <Image
+                            src={kestrelPhotosScreenshot}
                             alt="Kestrel Photos screenshot"
                         />
                     </div>

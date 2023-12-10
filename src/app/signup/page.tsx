@@ -2,6 +2,7 @@
 
 import {NextPage} from "next"
 import Link from "next/link"
+import Image from "next/image";
 import React, {useState} from "react"
 
 import {Navigation} from "../../components/Navigation"
@@ -9,7 +10,7 @@ import {Headers} from "../../components/Headers"
 import Footer from "../../components/Footer"
 import {supabase} from "../../utils/supabaseClient"
 import Alert from "../../components/Alert"
-
+import kestrelProfile from "./kestrelprofile.jpg"
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -78,9 +79,9 @@ function SignupForm() {
             <section
                 className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
             >
-                <img
+                <Image
                     alt="Profile photo of a kestrel"
-                    src="/images/kestrelprofile.jpg"
+                    src={kestrelProfile}
                     className="absolute inset-0 h-full w-full object-cover opacity-80 object-[0%_35%]"
                 />
 

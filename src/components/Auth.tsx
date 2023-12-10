@@ -1,12 +1,10 @@
 "use client"
 
-import { Dispatch, FunctionComponent, SetStateAction, useState } from 'react'
+import { FunctionComponent, useState } from 'react'
 import { supabaseUrl, supabaseAnonKey } from '../utils/supabaseClient'
-import { Session } from '@supabase/gotrue-js'
 import React from "react"
 import Alert from "./Alert"
 import {createBrowserClient} from "@supabase/ssr"
-import {redirect} from "next/navigation"
 import {useRouter} from "next/navigation"
 
 type AuthProperties = {
