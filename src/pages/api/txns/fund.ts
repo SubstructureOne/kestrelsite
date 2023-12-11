@@ -1,19 +1,19 @@
-import {NextApiRequest, NextApiResponse} from "next"
-import getStripe from "../../../utils/stripe"
-import {userFromAuthHeader} from "../../../utils/auth"
-import logger from "../../../utils/logger"
+import {NextApiRequest, NextApiResponse} from "next";
+import getStripe from "../../../utils/stripe";
+import {userFromAuthHeader} from "../../../utils/auth";
+import logger from "../../../utils/logger";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-    const user = await userFromAuthHeader(req)
+    const user = await userFromAuthHeader(req);
     if (user === null) {
-        res.status(400).json({error: "Not logged in"})
-        return
+        res.status(400).json({error: "Not logged in"});
+        return;
     }
-    const stripe = await getStripe()
+    const stripe = await getStripe();
     if (stripe.isErr) {
-        logger.error("Couldn't initialize stripe")
-        res.status(500).json({error: "Couldn't initialize stripe"})
-        return
+        logger.error("Couldn't initialize stripe");
+        res.status(500).json({error: "Couldn't initialize stripe"});
+        return;
     }
     const session = await stripe.value.checkout.sessions.create(
         {
@@ -30,10 +30,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             client_reference_id: user.id,
             customer_email: user.email,
         },
-    )
+    );
     if (session.url === null) {
-        res.status(500).json({error: "Session URL is null"})
+        res.status(500).json({error: "Session URL is null"});
     } else {
-        res.status(200).json({redirect: session.url})
+        res.status(200).json({redirect: session.url});
     }
 }

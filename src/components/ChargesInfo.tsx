@@ -1,6 +1,6 @@
-import {KResult} from "../utils/errors"
-import {ChargeInfo} from "../utils/dbtypes"
-import Alert from "./Alert"
+import {KResult} from "../utils/errors";
+import {ChargeInfo} from "../utils/dbtypes";
+import Alert from "./Alert";
 
 import {
     Chart as ChartJS,
@@ -16,7 +16,7 @@ import {
 } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
-import React from "react"
+import React from "react";
 
 ChartJS.register(
     CategoryScale,
@@ -55,9 +55,9 @@ export const options = {
 export const ChargesInfoTab = (chargesInfo: KResult<ChargeInfo[]> | undefined) => {
     let chargeTable;
     if (chargesInfo?.isErr) {
-        chargeTable = <Alert alert={chargesInfo.error.friendly} />
+        chargeTable = <Alert alert={chargesInfo.error.friendly} />;
     } else if (chargesInfo === undefined) {
-        chargeTable = <>Loading...</>
+        chargeTable = <>Loading...</>;
     } else {
         const types = new Set(chargesInfo.value.map(charge => charge.charge_type));
         let datasets = [];
@@ -92,15 +92,15 @@ export const ChargesInfoTab = (chargesInfo: KResult<ChargeInfo[]> | undefined) =
                         y: charge.amount,
                     }))
             };
-            console.log(`Data for ${type}: ${JSON.stringify(dataset.data)}`)
+            console.log(`Data for ${type}: ${JSON.stringify(dataset.data)}`);
             datasets.push(dataset);
         }
         chargeTable = <>
             <h2>Recent charges</h2>
             <Bar width={1200} height={600} options={options} data={{datasets}}/>
-        </>
+        </>;
     }
     return <div className="col-span-3 p-4 m-4">
         {chargeTable}
-    </div>
-}
+    </div>;
+};

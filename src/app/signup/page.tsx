@@ -1,15 +1,16 @@
-import {NextPage} from "next"
-import {Navigation} from "../components/Navigation"
-import {Headers} from "../components/Headers"
-import {useState} from "react"
-import Footer from "../components/Footer"
-import React from "react"
-import {supabase} from "../utils/supabaseClient"
-import Alert from "../components/Alert"
-import Link from "next/link"
-import PasswordGenerator from "generate-password";
-import {encryptDataWithPassword} from "../utils/encrypt"
-import {toBase64} from "pvutils"
+"use client";
+
+import {NextPage} from "next";
+import Link from "next/link";
+import Image from "next/image";
+import React, {useState} from "react";
+
+import {Navigation} from "../../components/Navigation";
+import {Headers} from "../../components/Headers";
+import Footer from "../../components/Footer";
+import {supabase} from "../../utils/supabaseClient";
+import Alert from "../../components/Alert";
+import kestrelProfile from "./kestrelprofile.jpg";
 
 const SignUpFlow: NextPage = () => {
     // const [pageNumber, setPageNumber] = useState("1")
@@ -23,8 +24,8 @@ const SignUpFlow: NextPage = () => {
             <SignupForm/>
         </div>
         <Footer/>
-    </>
-}
+    </>;
+};
 
 function CheckEmail() {
     return <div className="grid h-screen px-4 bg-white place-content-center">
@@ -42,17 +43,17 @@ function CheckEmail() {
                 Go Back Home
             </Link>
         </div>
-    </div>
+    </div>;
 }
 
 
 function SignupForm() {
-    const [name, setName] = useState("")
-    const [password, setPassword] = useState("")
-    const [email, setEmail] = useState("")
-    const [receivedPromos, setReceivePromos] = useState(false)
-    const [alert, setAlert] = useState("")
-    const [emailSent, setEmailSent] = useState(false)
+    const [name, setName] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [receivedPromos, setReceivePromos] = useState(false);
+    const [alert, setAlert] = useState("");
+    const [emailSent, setEmailSent] = useState(false);
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const { error } = await supabase.auth.signUp(
@@ -66,21 +67,21 @@ function SignupForm() {
                     }
                 }
             },
-        )
+        );
         if (error !== null) {
-            setAlert(error.message)
+            setAlert(error.message);
         } else {
             setEmailSent(true);
         }
-    }
+    };
     return emailSent ? CheckEmail() : <div className="bg-white">
         <div className="lg:grid lg:grid-cols-12 border-x-2 border-black">
             <section
                 className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
             >
-                <img
+                <Image
                     alt="Profile photo of a kestrel"
-                    src="/images/kestrelprofile.jpg"
+                    src={kestrelProfile}
                     className="absolute inset-0 h-full w-full object-cover opacity-80 object-[0%_35%]"
                 />
 
@@ -209,11 +210,11 @@ function SignupForm() {
                 </div>
             </main>
         </div>
-    </div>
+    </div>;
 }
 
 interface ProgressBarTypes {
     selectedNumber: string
 }
 
-export default SignUpFlow
+export default SignUpFlow;

@@ -1,153 +1,13 @@
-import { NextPage } from 'next'
-import { Headers } from '../components/Headers'
-import { Navigation } from '../components/Navigation'
-import Footer from '../components/Footer'
-import { useSession, supabase } from '../utils/supabaseClient'
-import {SigninForm} from '../components/Auth'
-import {Session} from '@supabase/gotrue-js'
-import {Dispatch, FunctionComponent, ReactElement, SetStateAction, useEffect, useState} from 'react'
-import {AccountInfo, AllTransactions, ChargeInfo} from "../utils/dbtypes"
-import {useRouter} from "next/router"
-import React from "react"
-import {Err, Ok, KResult} from "../utils/errors"
-import Alert from "../components/Alert"
-import logger from "../utils/logger"
-import {ChargesInfoTab} from "../components/ChargesInfo"
+"use client";
 
-type UserInfo = {
-    email: string
-    name: string
-    access_token: string
-}
+import Link from "next/link";
+import React, {Dispatch, FunctionComponent, ReactElement, SetStateAction, useState} from "react";
 
-async function getUserInfo(session: Session): Promise<UserInfo> {
-    return {
-        email: session.user.email ?? "",
-        name: session.user.user_metadata.name,
-        access_token: session.access_token,
-    }
-}
+import {KResult} from "../../utils/errors";
+import {AccountInfo, AllTransactions, ChargeInfo, UserInfo} from "../../utils/dbtypes";
+import {ChargesInfoTab} from "../../components/ChargesInfo";
+import Alert from "../../components/Alert";
 
-async function getAccountInfo(session: Session): Promise<KResult<AccountInfo|null>> {
-    const user_id = session.user?.id
-     if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
-    }
-    const response = await fetch(
-        `/api/user/${user_id}`,
-        {
-            headers: {
-                Authorization: `Bearer ${session.access_token}`
-            }
-        }
-    )
-    if (response.ok) {
-        const accountInfo: AccountInfo = await response.json()
-        return Ok(accountInfo)
-    } else if (response.status == 404) {
-        return Ok(null)
-    } else {
-        const result = await response.json()
-        return Err({friendly: "Error getting account info", cause: result})
-    }
-}
-
-async function getCharges(session: Session): Promise<KResult<ChargeInfo[]>> {
-    const user_id = session.user?.id
-    if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
-    }
-    const response = await fetch(
-        `/api/charges/${user_id}`,
-        {
-            headers: {
-                Authorization: `Bearer ${session.access_token}`
-            }
-        }
-    )
-    const result = await response.json()
-    if (response.ok) {
-        return Ok(result)
-    } else {
-        return Err({friendly: "Error getting charges", cause: result})
-    }
-}
-
-async function getTransactions(session: Session): Promise<KResult<AllTransactions>> {
-    const user_id = session.user?.id
-    if (user_id === undefined) {
-        return Err({friendly: "Not logged in", cause: null})
-    }
-    const response = await fetch(
-        `/api/txns/${user_id}`,
-        {
-            headers: {
-                Authorization: `Bearer ${session.access_token}`
-            }
-        }
-    )
-    const result = await response.json()
-    if (response.ok) {
-        return Ok(result)
-    } else {
-        return Err({friendly: "Error getting transactions", cause: result})
-    }
-}
-
-
-const PaymentBanner: React.FC<{userInfo: UserInfo | undefined, newUser: boolean}> = ({userInfo, newUser}) => {
-    return <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
-            <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
-                {newUser ? "Initialize your account now" : "Fund your account now"}
-            </p>
-
-            <h2 className="mt-6 text-3xl font-bold">
-                In order to use your Kestrel account, you must purchase credits.
-            </h2>
-
-            <a
-                href="#"
-                className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
-                onClick={async () => createCheckoutSession(userInfo)}
-            >
-                Purchase Credits
-            </a>
-        </div>
-
-}
-
-const PreviewOnly = () => {
-    return <>
-        <h2>Preview-Only Mode</h2>
-        <p>
-            Kestrel is currently deployed in preview-only mode, so account
-            creation and login is currently disabled.
-        </p>
-        <p>
-            Follow <a href="https://twitter.com/SubstructureOne" target="_blank">
-            @SubstructureOne
-        </a> on Twitter to get the latest project updates and get notified when
-            the Kestrel substructure goes live for public beta.
-        </p>
-    </>
-}
-
-type AccountBalanceComponentArgs = {
-    session: Session
-}
-
-async function createCheckoutSession(userInfo: UserInfo | undefined) {
-    if (userInfo === undefined) {
-        return
-    }
-    const res = await fetch("/api/txns/fund", {
-        headers: {
-            "Authorization": `Bearer ${userInfo.access_token}`
-        }
-    })
-    const json = await res.json()
-    window.location = json.redirect
-}
 
 function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined, accountInfo: KResult<AccountInfo | null> | undefined}) {
     let balance, pgName, pgPassword;
@@ -167,8 +27,8 @@ function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined
             pgPassword = accountInfo.value.pg_password;
         }
     } else {
-        balance = "error"
-        pgName = "error"
+        balance = "error";
+        pgName = "error";
     }
     return <>
         <a
@@ -257,66 +117,71 @@ function AccountInfoTab({userInfo, accountInfo}: {userInfo: UserInfo | undefined
             </div>
 
         </a>
-    </>
+    </>;
 }
 
-function chargesInfoTab(chargesInfo: KResult<ChargeInfo[]> | undefined) {
-    let chargeTable
-    if (chargesInfo?.isErr) {
-        chargeTable = <Alert alert={chargesInfo.error.friendly} />
-    } else {
-        chargeTable = <>
-            <h2>Recent charges</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th scope="col">Time</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Amount</th>
-                    {/*<th scope="col">Transacted</th>*/}
-                </tr>
-                </thead>
-                <tbody>
-                {chargesInfo === undefined ? "Loading..." : chargesInfo.value.map((charge) => <tr key={charge.charge_id}>
-                    <td>{new Date(charge.charge_time).toLocaleString()}</td>
-                    <td>{charge.charge_type}</td>
-                    <td>${(charge.amount || 0).toLocaleString([], {minimumFractionDigits: 2})}</td>
-                    {/*<td>{charge.transacted.toString()}</td>*/}
-                </tr>)}
-                </tbody>
-            </table>
-        </>
+
+const PaymentBanner: React.FC<{userInfo: UserInfo | undefined, newUser: boolean}> = ({userInfo, newUser}) => {
+    return <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
+        <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
+            {newUser ? "Initialize your account now" : "Fund your account now"}
+        </p>
+
+        <h2 className="mt-6 text-3xl font-bold">
+            In order to use your Kestrel account, you must purchase credits.
+        </h2>
+
+        <a
+            href="#"
+            className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
+            onClick={async () => createCheckoutSession(userInfo)}
+        >
+            Purchase Credits
+        </a>
+    </div>;
+};
+
+
+async function createCheckoutSession(userInfo: UserInfo | undefined) {
+    if (userInfo === undefined) {
+        return;
     }
-    return <div className="col-span-3 p-4 m-4">
-        {chargeTable}
-    </div>
+    const res = await fetch("/api/txns/fund", {
+        headers: {
+            "Authorization": `Bearer ${userInfo.access_token}`
+        }
+    });
+    const json = await res.json();
+    window.location = json.redirect;
 }
+
+
 
 function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
-    let allTxnInfo
+    let allTxnInfo;
     if (txnsInfo !== undefined && txnsInfo.isErr) {
-        allTxnInfo = <Alert alert={txnsInfo.error.friendly} />
+        allTxnInfo = <Alert alert={txnsInfo.error.friendly} />;
     } else {
-        let internalTxnRows, externalTxnRows
+        let internalTxnRows, externalTxnRows;
         if (txnsInfo === undefined) {
-            internalTxnRows = "Loading..."
+            internalTxnRows = "Loading...";
         } else if (txnsInfo.value.internal_txns.length === 0) {
-            internalTxnRows = <td colSpan={2}>No recent transactions</td>
+            internalTxnRows = <td colSpan={2}>No recent transactions</td>;
         } else {
             internalTxnRows = txnsInfo.value.internal_txns.map((txn) => <tr key={txn.txn_id}>
                 <td>{new Date(txn.txn_time).toLocaleString()}</td>
                 <td>{txn.amount}</td>
-            </tr>)
+            </tr>);
         }
         if (txnsInfo === undefined) {
-            externalTxnRows = "Loading..."
+            externalTxnRows = "Loading...";
         } else if (txnsInfo.value.external_txns.length === 0) {
-            externalTxnRows = <td colSpan={2}>No external transactions</td>
+            externalTxnRows = <td colSpan={2}>No external transactions</td>;
         } else {
             externalTxnRows = txnsInfo.value.external_txns.map((txn) => <tr key={txn.exttransaction_id}>
                 <td>{txn.exttransaction_time.toLocaleString()}</td>
                 <td>${txn.amount.toFixed(2)}</td>
-            </tr>)
+            </tr>);
         }
         allTxnInfo = <>
             {/*<h2>Recent transactions</h2>*/}
@@ -339,33 +204,29 @@ function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
                 </thead>
                 <tbody>{externalTxnRows}</tbody>
             </table>
-        </>
+        </>;
     }
     return <div className="col-span-3 m-4 p-4 min-w-full">
         {allTxnInfo}
-    </div>
+    </div>;
 
 }
 
-type MenuItems = "account-info" | "transactions" | "charges"
+
+type MenuItems = "account-info" | "transactions" | "charges";
 type MenuProps = {
     selected: MenuItems
     setSelected: Dispatch<SetStateAction<MenuItems>>
     userInfo: UserInfo | undefined
-}
+};
 
 const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, userInfo}) => {
-    const router = useRouter()
-    const signout = async () => {
-        await supabase.auth.signOut()
-        router.reload()
-    }
     const userInfoSection = (userInfo !== undefined) ? <p className="text-xs">
         <strong className="block font-medium">{userInfo.name}</strong>
         <span> {userInfo.email} </span>
-    </p> : <p></p>
-    const selectedClasses = "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700"
-    const unselectedClasses = "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+    </p> : <p></p>;
+    const selectedClasses = "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700";
+    const unselectedClasses = "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700";
     return <div className="flex flex-col justify-between border-r bg-white row-span-4">
         <div className="px-4 py-6">
             <nav aria-label="Main Nav" className="mt-6 flex flex-col space-y-1">
@@ -443,10 +304,9 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                     <span className="text-sm font-medium hidden md:inline"> Charges </span>
                 </a>
 
-                <a
-                    href="#"
+                <Link
+                    href="/signout"
                     className={unselectedClasses}
-                    onClick={signout}
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -464,7 +324,7 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                     </svg>
 
                     <span className="text-sm font-medium hidden md:inline"> Sign Out </span>
-                </a>
+                </Link>
             </nav>
         </div>
 
@@ -475,22 +335,24 @@ const LeftSideMenu: FunctionComponent<MenuProps> = ({selected, setSelected, user
                 </div>
             </a>
         </div>
-    </div>
-}
+    </div>;
+};
 
 
 function AccountInfoHtml(
-    userInfo: UserInfo | undefined,
-    accountInfo: KResult<AccountInfo | null> | undefined,
-    chargesInfo: KResult<ChargeInfo[]> | undefined,
-    txnsInfo: KResult<AllTransactions> | undefined,
+    {userInfo, accountInfo, chargesInfo, txnsInfo}: {
+        userInfo: UserInfo | undefined,
+        accountInfo: KResult<AccountInfo | null> | undefined,
+        chargesInfo: KResult<ChargeInfo[]> | undefined,
+        txnsInfo: KResult<AllTransactions> | undefined,
+    }
 ): ReactElement {
-    const [selected, setSelected] = useState<MenuItems>("account-info")
+    const [selected, setSelected] = useState<MenuItems>("account-info");
     const showBanner = accountInfo !== undefined && accountInfo.isOk && (
         accountInfo.value === null
         || accountInfo.value.user_status === "Disabled"
-    )
-    const newUser = accountInfo !== undefined && accountInfo.isOk && accountInfo.value === null
+    );
+    const newUser = accountInfo !== undefined && accountInfo.isOk && accountInfo.value === null;
     return <div className="gap-4 flex">
         <LeftSideMenu selected={selected} setSelected={setSelected} userInfo={userInfo}/>
 
@@ -504,46 +366,8 @@ function AccountInfoHtml(
             {/*{selected === "charges" ? chargesInfoTab(chargesInfo) : null}*/}
             {selected === "charges" ? ChargesInfoTab(chargesInfo) : null}
         </div>
-    </div>
+    </div>;
 }
 
-const AccountInfoComponent: FunctionComponent<AccountBalanceComponentArgs> = (
-    {session}
-) => {
-    const [userInfo, setUserInfo] = useState<UserInfo|undefined>(undefined)
-    const [accountInfo, setAccountInfo] = useState<KResult<AccountInfo|null>|undefined>(undefined)
-    const [chargesInfo, setChargesInfo] = useState<KResult<ChargeInfo[]>|undefined>(undefined)
-    const [txnsInfo, setTxnsInfo] = useState<KResult<AllTransactions>|undefined>(undefined)
-    useEffect(
-        () => {
-            getUserInfo(session).then((info) => setUserInfo(info))
-            getAccountInfo(session).then((info) => setAccountInfo(info))
-            getCharges(session).then((info) => setChargesInfo(info))
-            getTransactions(session).then((info) => setTxnsInfo(info))
-        },
-        [session]
-    )
-    return AccountInfoHtml(
-        userInfo,
-        accountInfo,
-        chargesInfo,
-        txnsInfo,
-    )
-}
 
-const Profile: NextPage = () => {
-    const [session, setSession] = useSession()
-    const title = session ? "Kestrel: Profile" : "Kestrel: Log In"
-    return <>
-        <Headers title={title}/>
-        <Navigation/>
-        {
-            process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
-                ? (session ? <AccountInfoComponent session={session}/> : <SigninForm setSession={setSession}/>)
-                : <PreviewOnly/>
-        }
-        <Footer/>
-    </>
-}
-
-export default Profile
+export default AccountInfoHtml;

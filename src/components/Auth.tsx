@@ -1,31 +1,36 @@
-import { Dispatch, FunctionComponent, SetStateAction, useState } from 'react'
-import { supabase } from '../utils/supabaseClient'
-import { Session } from '@supabase/gotrue-js'
-import React from "react"
-import Alert from "./Alert"
+"use client";
+
+import { FunctionComponent, useState } from 'react';
+import { supabaseUrl, supabaseAnonKey } from '../utils/supabaseClient';
+import React from "react";
+import Alert from "./Alert";
+import {createBrowserClient} from "@supabase/ssr";
+import {useRouter} from "next/navigation";
 
 type AuthProperties = {
-    setSession: Dispatch<SetStateAction<Session|null>>
-}
+};
 
-export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [alert, setAlert] = useState('')
+export const SigninForm: FunctionComponent<AuthProperties> = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [alert, setAlert] = useState('');
+    const router = useRouter();
+    const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+        event.preventDefault();
         const {
             data: { session },
             error,
         } = await supabase.auth.signInWithPassword(
             {email, password},
-        )
-        if (error !== null) {
-            setAlert(error.message)
+        );
+        if (error === null) {
+            router.push("/profile");
+        } else {
+            setAlert(error.message);
         }
-        setSession(session)
-    }
+    };
 
     return <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg text-center">
@@ -39,6 +44,7 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
         <form
             className="mx-auto mt-8 mb-0 max-w-md space-y-4"
             onSubmit={onSubmitHandler}
+            target="/profile"
         >
             <div>
                 <label htmlFor="email" className="sr-only">Email</label>
@@ -84,27 +90,27 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
                     />
 
                     <span className="absolute inset-y-0 right-0 grid place-content-center px-4">
-          <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-          >
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-        </span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-gray-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                        </svg>
+                    </span>
                 </div>
             </div>
 
@@ -123,6 +129,6 @@ export const SigninForm: FunctionComponent<AuthProperties> = ({setSession}) => {
                 </button>
             </div>
         </form>
-    </div>
+    </div>;
 
-}
+};

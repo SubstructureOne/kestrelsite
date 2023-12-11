@@ -1,18 +1,18 @@
 // import { SecretsManagerClient, GetSecretValueCommand } from "@aws-sdk/client-secrets-manager"
-import {KResult, Ok, Err} from "./errors"
-import Dict = NodeJS.Dict
+import {KResult, Ok, Err} from "./errors";
+import Dict = NodeJS.Dict;
 
 
 export async function getEnv(key: string): Promise<KResult<string>> {
-    const secrets = await getEnviron()
+    const secrets = await getEnviron();
     if (secrets.isErr) {
-        return Err(secrets.error)
+        return Err(secrets.error);
     }
-    const value = secrets.value[key]
+    const value = secrets.value[key];
     if (value === undefined) {
-        return Err({friendly: "Specified secret not found", cause: key})
+        return Err({friendly: "Specified secret not found", cause: key});
     }
-    return Ok(value)
+    return Ok(value);
 }
 
 export async function getEnviron(): Promise<KResult<Dict<string>>> {

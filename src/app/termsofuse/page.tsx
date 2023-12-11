@@ -1,7 +1,8 @@
-import {NextPage} from "next"
-import {Headers} from "../components/Headers"
-import {Navigation} from "../components/Navigation"
-import Footer from "../components/Footer"
+import {NextPage} from "next";
+
+import {Headers} from "../../components/Headers";
+import {Navigation} from "../../components/Navigation";
+import Footer from "../../components/Footer";
 
 const TermsOfUse: NextPage = () => {
     return <>
@@ -77,8 +78,8 @@ const TermsOfUse: NextPage = () => {
             <p>Substructure One welcomes your questions or comments regarding the Terms:</p>
 
             <p>Substructure One, LLC<br/>
-            600 Park Offices Drive, Suite 300 #19<br/>
-            Durham, North Carolina 27709</p>
+                600 Park Offices Drive, Suite 300 #19<br/>
+                Durham, North Carolina 27709</p>
 
 
             <h3 className="text-xl my-3">Email Address:</h3>
@@ -90,7 +91,7 @@ const TermsOfUse: NextPage = () => {
             <p className="my-5">Effective as of February 23, 2023</p>
         </div>
         <Footer/>
-    </>
-}
+    </>;
+};
 
-export default TermsOfUse
+export default TermsOfUse;

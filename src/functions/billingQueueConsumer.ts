@@ -1,27 +1,27 @@
-import { SQSEvent } from "aws-lambda"
-import {Client} from "pg"
-import words from "friendly-words"
+import { SQSEvent } from "aws-lambda";
+import {Client} from "pg";
+import words from "friendly-words";
 
 import PasswordGenerator from "generate-password";
 import {KResult, Err} from "../utils/errors";
 import logger from "../utils/logger";
-import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database"
+import {createExternalTransaction, createUser, getuser, pgconnect} from "../utils/database";
 import {AccountInfo, NewExternalTransactionInfo, NewUserInfo} from "../utils/dbtypes";
 import {managed_pgconnect, provisionManagedUser} from "../utils/managed_db";
 
 
 export async function handler(event: SQSEvent) {
-    const client = await pgconnect()
+    const client = await pgconnect();
     if (client.isErr) {
-        logger.error("Couldn't connect to postgres")
-        return
+        logger.error("Couldn't connect to postgres");
+        return;
     }
     for (const record of event.Records) {
-        const transaction: NewExternalTransactionInfo = JSON.parse(record.body)
-        logger.info(`Processing new external transaction: ${JSON.stringify(transaction)}`)
-        await saveTransaction(client.value, transaction)
+        const transaction: NewExternalTransactionInfo = JSON.parse(record.body);
+        logger.info(`Processing new external transaction: ${JSON.stringify(transaction)}`);
+        await saveTransaction(client.value, transaction);
     }
-    await client.value.end()
+    await client.value.end();
 }
 
 

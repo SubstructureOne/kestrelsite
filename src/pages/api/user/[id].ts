@@ -1,7 +1,7 @@
-import {NextApiRequest, NextApiResponse} from "next"
-import {pgconnect, getuser} from "../../../utils/database"
-import {userFromAuthHeader} from "../../../utils/auth"
-import logger from "../../../utils/logger"
+import {NextApiRequest, NextApiResponse} from "next";
+import {pgconnect, getuser} from "../../../utils/database";
+import {userFromAuthHeader} from "../../../utils/auth";
+import logger from "../../../utils/logger";
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

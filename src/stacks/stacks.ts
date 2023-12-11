@@ -1,5 +1,5 @@
-import {NextjsSite, Queue, StackContext} from "sst/constructs"
-import {SubnetType, Vpc} from "aws-cdk-lib/aws-ec2"
+import {NextjsSite, Queue, StackContext} from "sst/constructs";
+import {SubnetType, Vpc} from "aws-cdk-lib/aws-ec2";
 
 export function KestrelSite({stack}: StackContext) {
     const queue = new Queue(
@@ -12,8 +12,8 @@ export function KestrelSite({stack}: StackContext) {
                 }
             },
         },
-    )
-    const vpc = Vpc.fromLookup(stack, "main-vpc", {vpcId: "vpc-0c9a3dd9172dc53cf"})
+    );
+    const vpc = Vpc.fromLookup(stack, "main-vpc", {vpcId: "vpc-0c9a3dd9172dc53cf"});
     const site = new NextjsSite(
         stack,
         "kestrelsite",
@@ -31,9 +31,9 @@ export function KestrelSite({stack}: StackContext) {
                 "STAGE": process.env.STAGE || "",
             }
         }
-    )
-    site.attachPermissions(["secretsmanager:GetSecretValue"])
+    );
+    site.attachPermissions(["secretsmanager:GetSecretValue"]);
     stack.addOutputs({
         SiteUrl: site.url,
-    })
+    });
 }

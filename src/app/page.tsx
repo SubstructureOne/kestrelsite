@@ -1,7 +1,16 @@
-import { NextPage } from 'next'
-import { Headers } from '../components/Headers'
-import { Navigation } from '../components/Navigation'
-import Footer from '../components/Footer'
+import {Metadata, NextPage} from 'next';
+import Image from "next/image";
+
+import { Headers } from '../components/Headers';
+import { Navigation } from '../components/Navigation';
+import Footer from '../components/Footer';
+import toolsWhiteImage from "../images/tools_white.svg";
+import speedometerWhiteImage from "../images/speedometer_white.svg";
+import lineGraphImage from "../images/linegraph_white.svg";
+
+export const metadata: Metadata = {
+    title: "Kestrel: The Substructure for Open Source Software as a Service",
+};
 
 const Home: NextPage = () => {
     return <>
@@ -36,7 +45,7 @@ const Home: NextPage = () => {
                         <div className="number">001</div>
                         <div className="process-titles">Open Code, Open Data</div>
                         <div className="icon-wrapper">
-                            <img src="/images/tools_white.svg" width="69" alt=""/>
+                            <Image src={toolsWhiteImage} style={{width: 69, height: 69}} alt="Tools icon"/>
                         </div>
                         <p>
                             Kestrel allows and encourages developers to
@@ -48,7 +57,7 @@ const Home: NextPage = () => {
                         <div className="number">002</div>
                         <div className="process-titles">Self-Sustaining</div>
                         <div className="icon-wrapper">
-                            <img src="/images/speedometer_white.svg" width="95" alt=""/>
+                            <Image src={speedometerWhiteImage} style={{width: 95, height: 95}} alt="Speedometer icon"/>
                         </div>
                         <p>
                             By utilizing pay-as-you-go pricing mechanisms, developers can deploy
@@ -61,7 +70,7 @@ const Home: NextPage = () => {
                         <div className="number">003</div>
                         <div className="process-titles">Fair Compensation</div>
                         <div className="icon-wrapper">
-                            <img src="/images/linegraph_white.svg" width="114" alt=""/>
+                            <Image src={lineGraphImage} style={{width: 114, height: 114}} alt="Line graph logo"/>
                         </div>
                         <p>
                             By defining reasonable premiums on top of base-layer service costs,
@@ -82,7 +91,7 @@ const Home: NextPage = () => {
             </div>
         </div>
         <Footer />
-    </>
-}
+    </>;
+};
 
-export default Home
+export default Home;

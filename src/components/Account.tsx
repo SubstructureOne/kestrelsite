@@ -1,5 +1,5 @@
-import { useState, useEffect, FunctionComponent } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { useState, useEffect, FunctionComponent } from 'react';
+import { supabase } from '../utils/supabaseClient';
 import { Session } from "@supabase/gotrue-js";
 
 interface AccountProps {
@@ -7,46 +7,46 @@ interface AccountProps {
 }
 
 const Account: FunctionComponent<AccountProps> = ({ session }) => {
-    const [loading, setLoading] = useState<boolean>(true)
-    const [username, setUsername] = useState<string>("")
-    const [website, setWebsite] = useState<string>("")
-    const [avatar_url, setAvatarUrl] = useState<string>("")
+    const [loading, setLoading] = useState<boolean>(true);
+    const [username, setUsername] = useState<string>("");
+    const [website, setWebsite] = useState<string>("");
+    const [avatar_url, setAvatarUrl] = useState<string>("");
 
     useEffect(() => {
-        void getProfile()
-    }, [session])
+        void getProfile();
+    }, [session]);
 
     async function getProfile() {
         try {
-            setLoading(true)
+            setLoading(true);
             const {
                 data: { session },
-            } = await supabase.auth.getSession()
-            const user = session?.user
+            } = await supabase.auth.getSession();
+            const user = session?.user;
 
             if (session?.access_token) {
-                setUsername(session?.access_token)
+                setUsername(session?.access_token);
             }
             if (user?.updated_at) {
-                setWebsite(user?.updated_at)
+                setWebsite(user?.updated_at);
             }
             if (user?.last_sign_in_at) {
-                setAvatarUrl(user?.last_sign_in_at)
+                setAvatarUrl(user?.last_sign_in_at);
             }
         } catch (error) {
-            alert(JSON.stringify(error))
+            alert(JSON.stringify(error));
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
     async function updateProfile(username: string, website: string, avatar_url: string) {
         try {
-            setLoading(true)
+            setLoading(true);
             const {
                 data: { session },
-            } = await supabase.auth.getSession()
-            const user = session?.user
+            } = await supabase.auth.getSession();
+            const user = session?.user;
 
             const updates = {
                 id: user?.id,
@@ -54,14 +54,14 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
                 website,
                 avatar_url,
                 updated_at: new Date(),
-            }
+            };
 
-            await supabase.from('profiles').upsert(updates)
+            await supabase.from('profiles').upsert(updates);
 
         } catch (error) {
-            alert(JSON.stringify(error))
+            alert(JSON.stringify(error));
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
@@ -106,7 +106,7 @@ const Account: FunctionComponent<AccountProps> = ({ session }) => {
                 </button>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Account;

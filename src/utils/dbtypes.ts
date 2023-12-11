@@ -7,7 +7,7 @@ export type AccountInfo = {
     created_at: string,
     updated_at: string,
     pg_password: string,
-}
+};
 
 export type ChargeInfo = {
     charge_id: string,
@@ -19,7 +19,7 @@ export type ChargeInfo = {
     amount: number,
     report_ids: number[],
     transacted: boolean
-}
+};
 
 export type TransactionInfo = {
     txn_id: number,
@@ -28,14 +28,14 @@ export type TransactionInfo = {
     to_user: string,
     charge_ids: number[],
     amount: number
-}
+};
 
 export type NewExternalTransactionInfo =  {
     user_id: string,
     amount: number,
     exttxn_time: string,
     exttxn_extid: string,
-}
+};
 
 export type ExternalTransactionInfo = {
     exttransaction_id: number,
@@ -43,15 +43,23 @@ export type ExternalTransactionInfo = {
     amount: number,
     exttransaction_time: string,
     exttransaction_extid: string,
-}
+};
 
 export type AllTransactions = {
     external_txns: ExternalTransactionInfo[],
     internal_txns: TransactionInfo[],
-}
+};
 
 export type NewUserInfo = {
     user_id: string,
     pg_name: string,
     pg_password: string,
-}
+};
+
+
+// supabase
+export type UserInfo = {
+    email: string
+    name: string
+    access_token: string
+};
