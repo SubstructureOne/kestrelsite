@@ -55,3 +55,11 @@ export type NewUserInfo = {
     pg_name: string,
     pg_password: string,
 };
+
+
+// supabase
+export type UserInfo = {
+    email: string
+    name: string
+    access_token: string
+};

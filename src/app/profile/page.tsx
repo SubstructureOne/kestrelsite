@@ -1,13 +1,19 @@
 import {redirect} from "next/navigation";
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import React from "react";
+import {Session} from "@supabase/gotrue-js";
+import {Client} from "pg";
 
 import { Headers } from '../../components/Headers';
 import { Navigation } from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import {supabaseUrl, supabaseAnonKey} from '../../utils/supabaseClient';
-import AccountInfoComponent from "./AccountInfoComponent";
-import React from "react";
+import {Err, KResult, Ok} from "../../utils/errors";
+import {AccountInfo, AllTransactions, ChargeInfo, UserInfo} from "../../utils/dbtypes";
+import AccountInfoHtml from "./AccountInfoComponent";
+import {getChargesByDay, getExternalTransactions, getuser, pgconnect} from "../../utils/database";
+import logger from "../../utils/logger";
 
 
 const PreviewOnly = () => {
@@ -24,6 +30,68 @@ const PreviewOnly = () => {
             the Kestrel substructure goes live for public beta.
         </p>
     </>;
+};
+
+
+async function getAccountInfo(client: Client, session: Session): Promise<KResult<AccountInfo|null>> {
+    const user_id = session.user?.id;
+    if (user_id === undefined) {
+        return Err({friendly: "Not logged in", cause: null});
+    }
+    const userInfo = await getuser(client, user_id);
+    if (userInfo.isErr) {
+        logger.error({"error": userInfo.error}, "Error retrieving account info");
+        return Err({"friendly": "Couldn't retrieve account info", cause: userInfo.error});
+    }
+    return userInfo;
+}
+
+async function getCharges(client: Client, session: Session): Promise<KResult<ChargeInfo[]>> {
+    const user_id = session.user?.id;
+    if (user_id === undefined) {
+        return Err({friendly: "Not logged in", cause: null});
+    }
+    const charges = await getChargesByDay(client, user_id, null, null);
+    return Ok(charges);
+}
+
+async function getTransactions(client: Client, session: Session): Promise<KResult<AllTransactions>> {
+    const user_id = session.user?.id;
+    if (user_id === undefined) {
+        return Err({friendly: "Not logged in", cause: null});
+    }
+    const exttxns = await getExternalTransactions(client, user_id);
+    return Ok({external_txns: exttxns, internal_txns: []});
+}
+
+async function getUserInfo(session: Session): Promise<UserInfo> {
+    return {
+        email: session.user.email ?? "",
+        name: session.user.user_metadata.name,
+        access_token: session.access_token,
+    };
+}
+
+
+const AccountInfoComponent = async (
+    session: Session
+) => {
+    const client = await pgconnect();
+    if (client.isErr) {
+        return <p>Error connecting to database; please try again later.</p>;
+    }
+    const [userInfo, accountInfo, chargesInfo, txnsInfo] = await Promise.all([
+        getUserInfo(session),
+        getAccountInfo(client.value, session),
+        getCharges(client.value, session),
+        getTransactions(client.value, session),
+    ]);
+    return <AccountInfoHtml
+        userInfo={userInfo}
+        accountInfo={accountInfo}
+        chargesInfo={chargesInfo}
+        txnsInfo={txnsInfo}
+    />;
 };
 
 
@@ -44,7 +112,6 @@ const Profile = async () => {
     );
     const {data} = await supabase.auth.getSession();
     const session = data.session;
-    console.log(`My session is ${JSON.stringify(session)}`);
     if (session === null) {
         redirect("/signin");
     }
@@ -54,7 +121,7 @@ const Profile = async () => {
         <Navigation/>
         {
             process.env.NEXT_PUBLIC_PREVIEW_MODE_DISABLED
-                ? <AccountInfoComponent session={session}/>
+                ? await AccountInfoComponent(session)
                 : <PreviewOnly/>
         }
         <Footer/>
