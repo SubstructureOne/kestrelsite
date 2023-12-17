@@ -1,10 +1,8 @@
 {
-  "extends": "next",
-  "rules": {
-    "react/no-unescaped-entities": "off",
-    "@stylistic/semi": "error"
-  },
-  "plugins": [
-    "@stylistic"
-  ]
+    "extends": "next",
+    "rules": {
+        "react/no-unescaped-entities": "off",
+        "@stylistic/semi": "error"
+    },
+    "plugins": ["@stylistic"]
 }
