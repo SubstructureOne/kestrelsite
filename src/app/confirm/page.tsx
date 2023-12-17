@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { NextPage } from "next";
+import { useRouter } from "next/navigation";
 
 import { Headers } from "@/components/Headers";
 import { Navigation } from "@/components/Navigation";
@@ -28,6 +29,7 @@ function useInterval(callback: Callback, delay: number) {
 }
 const ConfirmPayment: NextPage = () => {
     const [session] = useSession();
+    const router = useRouter();
     let moreRecentThan = new Date();
     moreRecentThan.setHours(moreRecentThan.getHours() - 1);
     useInterval(() => {
@@ -46,7 +48,7 @@ const ConfirmPayment: NextPage = () => {
                                 moreRecentThan,
                         ).length > 0
                     ) {
-                        (window as Window).location = "/profile";
+                        router.push("/profile");
                     }
                 });
         }
