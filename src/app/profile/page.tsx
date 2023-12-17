@@ -5,25 +5,25 @@ import React from "react";
 import { Session } from "@supabase/gotrue-js";
 import { Client } from "pg";
 
-import { Headers } from "../../components/Headers";
-import { Navigation } from "../../components/Navigation";
-import Footer from "../../components/Footer";
-import { supabaseUrl, supabaseAnonKey } from "../../utils/supabaseClient";
-import { Err, KResult, Ok } from "../../utils/errors";
+import { Headers } from "@/components/Headers";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { supabaseUrl, supabaseAnonKey } from "@/utils/supabaseClient";
+import { Err, KResult, Ok } from "@/utils/errors";
 import {
     AccountInfo,
     AllTransactions,
     ChargeInfo,
     UserInfo,
-} from "../../utils/dbtypes";
+} from "@/utils/dbtypes";
 import AccountInfoHtml from "./AccountInfoComponent";
 import {
     getChargesByDay,
     getExternalTransactions,
     getuser,
     pgconnect,
-} from "../../utils/database";
-import logger from "../../utils/logger";
+} from "@/utils/database";
+import logger from "@/utils/logger";
 
 const PreviewOnly = () => {
     return (
