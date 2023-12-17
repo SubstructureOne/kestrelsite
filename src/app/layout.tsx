@@ -1,6 +1,7 @@
-import "../styles/globals.css";
 import { ReactNode } from "react";
 import { Metadata } from "next";
+
+import "@/styles/globals.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (

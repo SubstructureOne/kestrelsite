@@ -1,8 +1,8 @@
 import { NextPage } from "next";
 
-import { Headers } from "../../components/Headers";
-import { Navigation } from "../../components/Navigation";
-import Footer from "../../components/Footer";
+import { Headers } from "@/components/Headers";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const PrivacyPolicy: NextPage = () => {
     return (

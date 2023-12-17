@@ -1,9 +1,9 @@
 import { NextPage } from "next";
 import Image from "next/image";
 
-import { Headers } from "../../components/Headers";
-import { Navigation } from "../../components/Navigation";
-import Footer from "../../components/Footer";
+import { Headers } from "@/components/Headers";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import kestrelPhotosScreenshot from "./kestrelphotos_screenshot.png";
 import githubLogoLight from "./GitHub-Mark-32px.png";
 

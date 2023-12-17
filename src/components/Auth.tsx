@@ -1,11 +1,12 @@
 "use client";
 
 import { FunctionComponent, useState } from "react";
-import { supabaseUrl, supabaseAnonKey } from "../utils/supabaseClient";
 import React from "react";
-import Alert from "./Alert";
 import { createBrowserClient } from "@supabase/ssr";
 import { useRouter } from "next/navigation";
+
+import { supabaseUrl, supabaseAnonKey } from "@/utils/supabaseClient";
+import Alert from "./Alert";
 
 type AuthProperties = {};
 

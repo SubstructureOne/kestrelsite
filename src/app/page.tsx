@@ -1,12 +1,12 @@
 import { Metadata, NextPage } from "next";
 import Image from "next/image";
 
-import { Headers } from "../components/Headers";
-import { Navigation } from "../components/Navigation";
-import Footer from "../components/Footer";
-import toolsWhiteImage from "../images/tools_white.svg";
-import speedometerWhiteImage from "../images/speedometer_white.svg";
-import lineGraphImage from "../images/linegraph_white.svg";
+import { Headers } from "@/components/Headers";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import toolsWhiteImage from "@/images/tools_white.svg";
+import speedometerWhiteImage from "@/images/speedometer_white.svg";
+import lineGraphImage from "@/images/linegraph_white.svg";
 
 export const metadata: Metadata = {
     title: "Kestrel: The Substructure for Open Source Software as a Service",

@@ -9,15 +9,15 @@ import React, {
     useState,
 } from "react";
 
-import { KResult } from "../../utils/errors";
+import { KResult } from "@/utils/errors";
 import {
     AccountInfo,
     AllTransactions,
     ChargeInfo,
     UserInfo,
-} from "../../utils/dbtypes";
-import { ChargesInfoTab } from "../../components/ChargesInfo";
-import Alert from "../../components/Alert";
+} from "@/utils/dbtypes";
+import { ChargesInfoTab } from "@/components/ChargesInfo";
+import Alert from "@/components/Alert";
 
 function AccountInfoTab({
     userInfo,

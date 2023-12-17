@@ -1,8 +1,9 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
-import { supabaseAnonKey, supabaseUrl } from "../../utils/supabaseClient";
 import { useRouter } from "next/navigation";
+
+import { supabaseAnonKey, supabaseUrl } from "@/utils/supabaseClient";
 
 export default function Signout() {
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);

@@ -1,12 +1,13 @@
 "use client";
 
-import { NextPage } from "next";
-import { Headers } from "../../components/Headers";
-import { Navigation } from "../../components/Navigation";
-import Footer from "../../components/Footer";
 import { useEffect, useRef } from "react";
-import { AllTransactions } from "../../utils/dbtypes";
-import { useSession } from "../../utils/supabase/client";
+import { NextPage } from "next";
+
+import { Headers } from "@/components/Headers";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { AllTransactions } from "@/utils/dbtypes";
+import { useSession } from "@/utils/supabase/client";
 
 type Callback = () => void;
 

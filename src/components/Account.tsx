@@ -1,6 +1,7 @@
 import { useState, useEffect, FunctionComponent } from "react";
-import { supabase } from "../utils/supabaseClient";
 import { Session } from "@supabase/gotrue-js";
+
+import { supabase } from "@/utils/supabaseClient";
 
 interface AccountProps {
     session: Session;

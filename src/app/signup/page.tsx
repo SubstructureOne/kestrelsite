@@ -5,11 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
 
-import { Navigation } from "../../components/Navigation";
-import { Headers } from "../../components/Headers";
-import Footer from "../../components/Footer";
-import { supabase } from "../../utils/supabaseClient";
-import Alert from "../../components/Alert";
+import { Navigation } from "@/components/Navigation";
+import { Headers } from "@/components/Headers";
+import Footer from "@/components/Footer";
+import { supabase } from "@/utils/supabaseClient";
+import Alert from "@/components/Alert";
 import kestrelProfile from "./kestrelprofile.jpg";
 
 const SignUpFlow: NextPage = () => {

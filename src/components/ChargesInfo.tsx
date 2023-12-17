@@ -1,5 +1,5 @@
-import { KResult } from "../utils/errors";
-import { ChargeInfo } from "../utils/dbtypes";
+import { KResult } from "@/utils/errors";
+import { ChargeInfo } from "@/utils/dbtypes";
 import Alert from "./Alert";
 
 import {
