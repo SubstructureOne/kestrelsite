@@ -1,19 +1,24 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {userFromAuthHeader} from "../../../utils/auth";
-import {getExternalTransactions, getTransactions, pgconnect} from "../../../utils/database";
+import { NextApiRequest, NextApiResponse } from "next";
+import { userFromAuthHeader } from "../../../utils/auth";
+import {
+    getExternalTransactions,
+    getTransactions,
+    pgconnect,
+} from "../../../utils/database";
 import logger from "../../../utils/logger";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-    const {query, method} = req;
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse,
+): Promise<void> {
+    const { query, method } = req;
     const fromUserId = <string>query.fromUserId;
     const user = await userFromAuthHeader(req);
     if (user?.id !== fromUserId) {
-        res
-            .status(403)
-            .json({error: "Permission denied"});
+        res.status(403).json({ error: "Permission denied" });
         return;
     }
-    if (method == 'GET') {
+    if (method == "GET") {
         const client = await pgconnect();
         if (client.isErr) {
             logger.error("Couldn't connect to Postgres");
@@ -28,8 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             internal_txns: [],
         });
     } else {
-        res
-            .status(405)
-            .json({error: `Method not allowed: ${method}`});
+        res.status(405).json({ error: `Method not allowed: ${method}` });
     }
 }

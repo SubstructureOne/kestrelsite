@@ -4,10 +4,14 @@ const getPasswordKey = (password: string) =>
         new TextEncoder().encode(password),
         "PBKDF2",
         false,
-        ["deriveKey"]
+        ["deriveKey"],
     );
 
-const deriveKey = (passwordKey: CryptoKey, salt: Uint8Array, keyUsages: KeyUsage[]) =>
+const deriveKey = (
+    passwordKey: CryptoKey,
+    salt: Uint8Array,
+    keyUsages: KeyUsage[],
+) =>
     window.crypto.subtle.deriveKey(
         {
             name: "PBKDF2",
@@ -18,10 +22,13 @@ const deriveKey = (passwordKey: CryptoKey, salt: Uint8Array, keyUsages: KeyUsage
         passwordKey,
         { name: "AES-GCM", length: 256 },
         false,
-        keyUsages
+        keyUsages,
     );
 
-export async function encryptDataWithPassword(secretData: string, password: string): Promise<Uint8Array> {
+export async function encryptDataWithPassword(
+    secretData: string,
+    password: string,
+): Promise<Uint8Array> {
     const salt = window.crypto.getRandomValues(new Uint8Array(16));
     const iv = window.crypto.getRandomValues(new Uint8Array(12));
     const passwordKey = await getPasswordKey(password);
@@ -32,11 +39,11 @@ export async function encryptDataWithPassword(secretData: string, password: stri
             iv: iv,
         },
         aesKey,
-        new TextEncoder().encode(secretData)
+        new TextEncoder().encode(secretData),
     );
     const encryptedContentArr = new Uint8Array(encryptedContent);
     let buff = new Uint8Array(
-        salt.byteLength + iv.byteLength + encryptedContentArr.byteLength
+        salt.byteLength + iv.byteLength + encryptedContentArr.byteLength,
     );
     buff.set(salt, 0);
     buff.set(iv, salt.byteLength);
@@ -44,7 +51,10 @@ export async function encryptDataWithPassword(secretData: string, password: stri
     return buff;
 }
 
-export async function decryptData(encryptedDataBuff: Uint8Array, password: string) {
+export async function decryptData(
+    encryptedDataBuff: Uint8Array,
+    password: string,
+) {
     const salt = encryptedDataBuff.slice(0, 16);
     const iv = encryptedDataBuff.slice(16, 16 + 12);
     const data = encryptedDataBuff.slice(16 + 12);
@@ -56,7 +66,7 @@ export async function decryptData(encryptedDataBuff: Uint8Array, password: strin
             iv: iv,
         },
         aesKey,
-        data
+        data,
     );
     return new TextDecoder().decode(decryptedContent);
 }
