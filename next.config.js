@@ -12,7 +12,6 @@ const nextConfig = {
     //   config.experiments = {...config.experiments, topLevelAwait: true}
     //   return config
     // }
-    output: "export",
 };
 
 module.exports = nextConfig;
