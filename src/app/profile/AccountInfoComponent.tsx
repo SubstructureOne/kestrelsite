@@ -1,21 +1,10 @@
 "use client";
 
-import React, { ReactElement, useState } from "react";
+import React, { useState } from "react";
 
 import { KResult } from "@/utils/errors";
-import {
-    AccountInfo,
-    AllTransactions,
-    ChargeInfo,
-    UserInfo,
-} from "@/utils/dbtypes";
-import { ChargesInfoTab } from "@/components/ChargesInfo";
-import Alert from "@/components/Alert";
-import { LeftSideMenu, MenuItems } from "@/app/profile/LeftSideMenuComponent";
-import {
-    createCheckoutSession,
-    PaymentBanner,
-} from "@/app/profile/PaymentBanner";
+import { AccountInfo, UserInfo } from "@/utils/dbtypes";
+import { createCheckoutSession } from "@/app/profile/PaymentBanner";
 
 export function AccountInfoTab({
     userInfo,
@@ -155,108 +144,3 @@ export function AccountInfoTab({
         </>
     );
 }
-
-function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
-    let allTxnInfo;
-    if (txnsInfo !== undefined && txnsInfo.isErr) {
-        allTxnInfo = <Alert alert={txnsInfo.error.friendly} />;
-    } else {
-        let internalTxnRows, externalTxnRows;
-        if (txnsInfo === undefined) {
-            internalTxnRows = "Loading...";
-        } else if (txnsInfo.value.internal_txns.length === 0) {
-            internalTxnRows = <td colSpan={2}>No recent transactions</td>;
-        } else {
-            internalTxnRows = txnsInfo.value.internal_txns.map((txn) => (
-                <tr key={txn.txn_id}>
-                    <td>{new Date(txn.txn_time).toLocaleString()}</td>
-                    <td>{txn.amount}</td>
-                </tr>
-            ));
-        }
-        if (txnsInfo === undefined) {
-            externalTxnRows = "Loading...";
-        } else if (txnsInfo.value.external_txns.length === 0) {
-            externalTxnRows = <td colSpan={2}>No external transactions</td>;
-        } else {
-            externalTxnRows = txnsInfo.value.external_txns.map((txn) => (
-                <tr key={txn.exttransaction_id}>
-                    <td>{txn.exttransaction_time.toLocaleString()}</td>
-                    <td>${txn.amount.toFixed(2)}</td>
-                </tr>
-            ));
-        }
-        allTxnInfo = (
-            <>
-                {/*<h2>Recent transactions</h2>*/}
-                {/*<table className="min-w-full divide-y-2 divide-gray-200 text-sm">*/}
-                {/*    <thead>*/}
-                {/*    <tr>*/}
-                {/*        <th scope="col">Time</th>*/}
-                {/*        <th scope="col">Amount</th>*/}
-                {/*    </tr>*/}
-                {/*    </thead>*/}
-                {/*    <tbody>{internalTxnRows}</tbody>*/}
-                {/*</table>*/}
-                <h2 className="my-5">External transactions</h2>
-                <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">Time</th>
-                            <th scope="col">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>{externalTxnRows}</tbody>
-                </table>
-            </>
-        );
-    }
-    return <div className="col-span-3 m-4 p-4 min-w-full">{allTxnInfo}</div>;
-}
-
-function AccountInfoHtml({
-    userInfo,
-    accountInfo,
-    chargesInfo,
-    txnsInfo,
-}: {
-    userInfo: UserInfo | undefined;
-    accountInfo: KResult<AccountInfo | null> | undefined;
-    chargesInfo: KResult<ChargeInfo[]> | undefined;
-    txnsInfo: KResult<AllTransactions> | undefined;
-}): ReactElement {
-    const [selected, setSelected] = useState<MenuItems>("account-info");
-    const showBanner =
-        accountInfo !== undefined &&
-        accountInfo.isOk &&
-        (accountInfo.value === null ||
-            accountInfo.value.user_status === "Disabled");
-    const newUser =
-        accountInfo !== undefined &&
-        accountInfo.isOk &&
-        accountInfo.value === null;
-    return (
-        <div className="gap-4 flex">
-            <LeftSideMenu selected={selected} userInfo={userInfo} />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {showBanner ? (
-                    <PaymentBanner newUser={newUser} userInfo={userInfo} />
-                ) : null}
-                {selected === "account-info" ? (
-                    <AccountInfoTab
-                        userInfo={userInfo}
-                        accountInfo={accountInfo}
-                    />
-                ) : null}
-                {selected === "transactions"
-                    ? transactionsInfoTab(txnsInfo)
-                    : null}
-                {/*{selected === "charges" ? chargesInfoTab(chargesInfo) : null}*/}
-                {selected === "charges" ? ChargesInfoTab(chargesInfo) : null}
-            </div>
-        </div>
-    );
-}
-
-export default AccountInfoHtml;

@@ -7,7 +7,7 @@ import { getAccountInfo, getCharges, getUserInfo } from "@/utils/accounts";
 import ProfileContainer from "@/app/profile/ProfileContainer";
 import { Headers } from "@/components/Headers";
 import React from "react";
-import { ChargesInfoTab } from "@/app/profile/charges/chargesInfoTab";
+import { ChargesInfoTab } from "@/app/profile/charges/ChargesInfoTab";
 
 const Charges = async () => {
     const cookiesStore = cookies();
