@@ -1,13 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import React, {
-    Dispatch,
-    FunctionComponent,
-    ReactElement,
-    SetStateAction,
-    useState,
-} from "react";
+import React, { ReactElement, useState } from "react";
 
 import { KResult } from "@/utils/errors";
 import {
@@ -18,8 +11,13 @@ import {
 } from "@/utils/dbtypes";
 import { ChargesInfoTab } from "@/components/ChargesInfo";
 import Alert from "@/components/Alert";
+import { LeftSideMenu, MenuItems } from "@/app/profile/LeftSideMenuComponent";
+import {
+    createCheckoutSession,
+    PaymentBanner,
+} from "@/app/profile/PaymentBanner";
 
-function AccountInfoTab({
+export function AccountInfoTab({
     userInfo,
     accountInfo,
 }: {
@@ -158,46 +156,6 @@ function AccountInfoTab({
     );
 }
 
-const PaymentBanner: React.FC<{
-    userInfo: UserInfo | undefined;
-    newUser: boolean;
-}> = ({ userInfo, newUser }) => {
-    return (
-        <div className="m-4 p-4 text-center rounded-3xl shadow-2xl col-span-full">
-            <p className="text-sm font-semibold uppercase tracking-widest text-pink-500">
-                {newUser
-                    ? "Initialize your account now"
-                    : "Fund your account now"}
-            </p>
-
-            <h2 className="mt-6 text-3xl font-bold">
-                In order to use your Kestrel account, you must purchase credits.
-            </h2>
-
-            <a
-                href="#"
-                className="mt-8 inline-block w-full rounded-full bg-pink-600 py-4 text-sm font-bold text-white shadow-xl"
-                onClick={async () => createCheckoutSession(userInfo)}
-            >
-                Purchase Credits
-            </a>
-        </div>
-    );
-};
-
-async function createCheckoutSession(userInfo: UserInfo | undefined) {
-    if (userInfo === undefined) {
-        return;
-    }
-    const res = await fetch("/api/txns/fund", {
-        headers: {
-            Authorization: `Bearer ${userInfo.access_token}`,
-        },
-    });
-    const json = await res.json();
-    window.location = json.redirect;
-}
-
 function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
     let allTxnInfo;
     if (txnsInfo !== undefined && txnsInfo.isErr) {
@@ -256,169 +214,6 @@ function transactionsInfoTab(txnsInfo: KResult<AllTransactions> | undefined) {
     return <div className="col-span-3 m-4 p-4 min-w-full">{allTxnInfo}</div>;
 }
 
-type MenuItems = "account-info" | "transactions" | "charges";
-type MenuProps = {
-    selected: MenuItems;
-    setSelected: Dispatch<SetStateAction<MenuItems>>;
-    userInfo: UserInfo | undefined;
-};
-
-const LeftSideMenu: FunctionComponent<MenuProps> = ({
-    selected,
-    setSelected,
-    userInfo,
-}) => {
-    const userInfoSection =
-        userInfo !== undefined ? (
-            <p className="text-xs">
-                <strong className="block font-medium">{userInfo.name}</strong>
-                <span> {userInfo.email} </span>
-            </p>
-        ) : (
-            <p></p>
-        );
-    const selectedClasses =
-        "flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700";
-    const unselectedClasses =
-        "flex items-center gap-2 rounded-lg px-4 py-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700";
-    return (
-        <div className="flex flex-col justify-between border-r bg-white row-span-4">
-            <div className="px-4 py-6">
-                <nav
-                    aria-label="Main Nav"
-                    className="mt-6 flex flex-col space-y-1"
-                >
-                    <a
-                        href="#"
-                        className={
-                            selected === "account-info"
-                                ? selectedClasses
-                                : unselectedClasses
-                        }
-                        onClick={() => setSelected("account-info")}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 opacity-75"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                            />
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                        </svg>
-
-                        <span className="text-sm font-medium hidden md:inline">
-                            {" "}
-                            Account Info{" "}
-                        </span>
-                    </a>
-
-                    <a
-                        href="#"
-                        className={
-                            selected === "transactions"
-                                ? selectedClasses
-                                : unselectedClasses
-                        }
-                        onClick={() => setSelected("transactions")}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 opacity-75"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                            />
-                        </svg>
-
-                        <span className="text-sm font-medium hidden md:inline">
-                            {" "}
-                            Transactions{" "}
-                        </span>
-                    </a>
-
-                    <a
-                        href="#"
-                        className={
-                            selected === "charges"
-                                ? selectedClasses
-                                : unselectedClasses
-                        }
-                        onClick={() => setSelected("charges")}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 opacity-75"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                            />
-                        </svg>
-
-                        <span className="text-sm font-medium hidden md:inline">
-                            {" "}
-                            Charges{" "}
-                        </span>
-                    </a>
-
-                    <Link href="/signout" className={unselectedClasses}>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 opacity-75"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                            />
-                        </svg>
-
-                        <span className="text-sm font-medium hidden md:inline">
-                            {" "}
-                            Sign Out{" "}
-                        </span>
-                    </Link>
-                </nav>
-            </div>
-
-            <div className="sticky inset-x-0 bottom-0 border-t border-gray-100">
-                <a
-                    href="#"
-                    className="flex items-center gap-2 bg-white p-4 hover:bg-gray-50"
-                >
-                    <div>{userInfoSection}</div>
-                </a>
-            </div>
-        </div>
-    );
-};
-
 function AccountInfoHtml({
     userInfo,
     accountInfo,
@@ -442,11 +237,7 @@ function AccountInfoHtml({
         accountInfo.value === null;
     return (
         <div className="gap-4 flex">
-            <LeftSideMenu
-                selected={selected}
-                setSelected={setSelected}
-                userInfo={userInfo}
-            />
+            <LeftSideMenu selected={selected} userInfo={userInfo} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {showBanner ? (

@@ -1,16 +1,15 @@
-import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import React from "react";
-
-import { Headers } from "@/components/Headers";
+import { createServerClient } from "@supabase/ssr";
 import { supabaseAnonKey, supabaseUrl } from "@/utils/supabaseClient";
-import { AccountInfoTab } from "./AccountInfoComponent";
+import { redirect } from "next/navigation";
 import { pgconnect } from "@/utils/database";
+import { getAccountInfo, getCharges, getUserInfo } from "@/utils/accounts";
 import ProfileContainer from "@/app/profile/ProfileContainer";
-import { getAccountInfo, getUserInfo } from "@/utils/accounts";
+import { Headers } from "@/components/Headers";
+import React from "react";
+import { ChargesInfoTab } from "@/app/profile/charges/chargesInfoTab";
 
-const Profile = async () => {
+const Charges = async () => {
     const cookiesStore = cookies();
     const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
         cookies: {
@@ -28,20 +27,21 @@ const Profile = async () => {
     if (client.isErr) {
         return <p>Error connecting to database; please try again later.</p>;
     }
-    const [userInfo, accountInfo] = await Promise.all([
+    const [userInfo, accountInfo, charges] = await Promise.all([
         getUserInfo(session),
         getAccountInfo(client.value, session),
+        getCharges(client.value, session),
     ]);
     return (
         <ProfileContainer
-            selected={"account-info"}
             userInfo={userInfo}
             accountInfo={accountInfo}
+            selected={"charges"}
         >
             <Headers title="Kestrel: Profile" />
-            <AccountInfoTab userInfo={userInfo} accountInfo={accountInfo} />
+            <ChargesInfoTab chargesInfo={charges} />
         </ProfileContainer>
     );
 };
 
-export default Profile;
+export default Charges;

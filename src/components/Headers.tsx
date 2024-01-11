@@ -1,10 +1,11 @@
 "use client";
 
 import React, { FunctionComponent, useEffect } from "react";
+import Head from "next/head";
 // import WebFont from 'webfontloader'
 
 type HeadersProps = {
-    title: string;
+    title?: string | undefined;
 };
 
 export const Headers: FunctionComponent<HeadersProps> = ({ title }) => {
@@ -23,7 +24,7 @@ export const Headers: FunctionComponent<HeadersProps> = ({ title }) => {
     return (
         <>
             <meta charSet="utf-8" />
-            <title>{title}</title>
+            {title !== undefined ? <title>{title}</title> : null}
             <meta
                 name="description"
                 content="Substructure Kestrel is the platform for Open Source Software as a Service"

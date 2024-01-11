@@ -1,17 +1,16 @@
 /// <reference types="stripe-event-types" />
 
-import AWS from "aws-sdk";
-// import {Queue} from "sst/node/queue"
 import { NextApiRequest, NextApiResponse } from "next";
-import getStripe from "../../../utils/stripe";
 import Stripe from "stripe";
 import getRawBody from "raw-body";
-import logger from "../../../utils/logger";
-import { NewExternalTransactionInfo } from "../../../utils/dbtypes";
-import { getEnv } from "../../../utils/secrets";
-import { billingEventHandler } from "../../../functions/billingQueueConsumer";
 
-const sqs = new AWS.SQS();
+import getStripe from "@/utils/stripe";
+import logger from "@/utils/logger";
+import { NewExternalTransactionInfo } from "@/utils/dbtypes";
+import { getEnv } from "@/utils/secrets";
+import { billingEventHandler } from "@/functions/billingQueueConsumer";
+
+// const sqs = new AWS.SQS();
 
 export const config = {
     api: {
