@@ -1,8 +1,12 @@
-import React, { Dispatch, FunctionComponent, SetStateAction } from "react";
+import React, { FunctionComponent } from "react";
 import { UserInfo } from "@/utils/dbtypes";
 import Link from "next/link";
 
-export type MenuItems = "account-info" | "transactions" | "charges";
+export type MenuItems =
+    | "account-info"
+    | "transactions"
+    | "charges"
+    | "update-password";
 type MenuProps = {
     selected: MenuItems;
     userInfo: UserInfo | undefined;
