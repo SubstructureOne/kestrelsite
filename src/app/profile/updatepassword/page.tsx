@@ -1,6 +1,4 @@
 import { Headers } from "@/components/Headers";
-import { Navigation } from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import React from "react";
 import { UpdatePassword } from "@/app/profile/updatepassword/UpdatePassword";
 import ProfileContainer from "@/app/profile/ProfileContainer";
@@ -44,7 +42,7 @@ const UpdatePasswordPage = async () => {
             >
                 <div className="col-span-3 p-4 m-4 min-w-full">
                     <h2>Set a New Password</h2>
-                    <UpdatePassword />
+                    <UpdatePassword userInfo={userInfo} />
                 </div>
             </ProfileContainer>
         </>

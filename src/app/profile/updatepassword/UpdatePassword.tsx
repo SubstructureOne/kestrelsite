@@ -7,8 +7,11 @@ import { useRouter } from "next/navigation";
 import { supabaseAnonKey, supabaseUrl } from "@/utils/supabaseClient";
 import logger from "@/utils/logger";
 import { PasswordSymbol } from "@/components/symbols";
+import { UserInfo } from "@/utils/dbtypes";
 
-export const UpdatePassword: React.FC<{}> = () => {
+export const UpdatePassword: React.FC<{
+    userInfo: UserInfo;
+}> = ({ userInfo }) => {
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -17,9 +20,6 @@ export const UpdatePassword: React.FC<{}> = () => {
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const {
-            data: { session },
-        } = await supabase.auth.getSession();
         const { error } = await supabase.auth.updateUser({
             password: newPassword,
         });
@@ -27,9 +27,7 @@ export const UpdatePassword: React.FC<{}> = () => {
             if (newPassword !== confirmPassword) {
                 setAlert("Passwords do not match");
             } else {
-                logger.info(
-                    `Updating password for user ${session?.user?.email}`,
-                );
+                logger.info(`Updating password for user ${userInfo.email}`);
                 const { error } = await supabase.auth.updateUser({
                     password: newPassword,
                 });
