@@ -8,8 +8,7 @@ export async function GET(request: NextRequest) {
     const token_hash = searchParams.get("token_hash");
     const type = searchParams.get("type") as EmailOtpType | null;
     const next = searchParams.get("next") ?? "/profile";
-    const redirectTo = request.nextUrl.clone();
-    redirectTo.pathname = `${process.env.NEXT_PUBLIC_BASE_URL}/${next}`;
+    const redirectTo = new URL(next, process.env.NEXT_PUBLIC_BASE_URL!);
 
     if (token_hash && type) {
         const cookieStore = cookies();
