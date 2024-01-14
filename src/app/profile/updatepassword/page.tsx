@@ -18,8 +18,11 @@ const UpdatePasswordPage = async () => {
             },
         },
     });
-    const { data } = await supabase.auth.getSession();
+    const { data, error } = await supabase.auth.getSession();
     const session = data.session;
+    if (error !== null) {
+        console.log(`Auth error: ${JSON.stringify(error)}`);
+    }
     if (session === null) {
         redirect("/signin");
     }
@@ -42,7 +45,7 @@ const UpdatePasswordPage = async () => {
             >
                 <div className="col-span-3 p-4 m-4 min-w-full">
                     <h2>Set a New Password</h2>
-                    <UpdatePassword userInfo={userInfo} />
+                    <UpdatePassword />
                 </div>
             </ProfileContainer>
         </>

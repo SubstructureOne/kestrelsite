@@ -4,6 +4,7 @@ import React, { FunctionComponent, useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { supabaseAnonKey, supabaseUrl } from "@/utils/supabaseClient";
 import Alert from "@/components/Alert";
+import logger from "@/utils/logger";
 
 const ResetPasswordComponent: FunctionComponent<{}> = () => {
     const [email, setEmail] = useState("");
@@ -14,8 +15,15 @@ const ResetPasswordComponent: FunctionComponent<{}> = () => {
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        if (process.env.NEXT_PUBLIC_BASE_URL === undefined) {
+            setAlert("Base URL unspecified");
+            return;
+        }
+        const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/profile/updatepassword`;
+        logger.info(`Sending magic link with redirect to ${redirectUrl}`);
+
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${process.env.BASE_URL}/profile/updatepassword`,
+            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/profile/updatepassword`,
         });
         if (error === null) {
             setResetSent(true);
@@ -86,7 +94,7 @@ const ResetPasswordComponent: FunctionComponent<{}> = () => {
                             type="submit"
                             className="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
                         >
-                            Sign in
+                            Send Password Reset
                         </button>
                     </div>
                 </form>

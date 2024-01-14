@@ -9,9 +9,7 @@ import logger from "@/utils/logger";
 import { PasswordSymbol } from "@/components/symbols";
 import { UserInfo } from "@/utils/dbtypes";
 
-export const UpdatePassword: React.FC<{
-    userInfo: UserInfo;
-}> = ({ userInfo }) => {
+export const UpdatePassword: React.FC<{}> = () => {
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,6 +18,9 @@ export const UpdatePassword: React.FC<{
 
     const onSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
         const { error } = await supabase.auth.updateUser({
             password: newPassword,
         });
@@ -27,7 +28,9 @@ export const UpdatePassword: React.FC<{
             if (newPassword !== confirmPassword) {
                 setAlert("Passwords do not match");
             } else {
-                logger.info(`Updating password for user ${userInfo.email}`);
+                logger.info(
+                    `Updating password for user ${session?.user?.email}`,
+                );
                 const { error } = await supabase.auth.updateUser({
                     password: newPassword,
                 });
@@ -76,7 +79,7 @@ export const UpdatePassword: React.FC<{
                     <input
                         type="password"
                         className="w-full rounded-lg border-gray-200 p-4 pr-12 text-sm shadow-sm"
-                        placeholder="Enter password"
+                        placeholder="Confirm password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
