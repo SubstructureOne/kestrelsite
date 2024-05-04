@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import getStripe from "../../../utils/stripe";
-import { userFromAuthHeader } from "../../../utils/auth";
-import logger from "../../../utils/logger";
+import getStripe from "@/utils/stripe";
+import { userFromAuthHeader } from "@/utils/auth";
+import logger from "@/utils/logger";
 
 export default async function handler(
     req: NextApiRequest,
