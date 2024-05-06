@@ -22,10 +22,6 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
         pathname === "/docs"
             ? defaultClasses + currentTabAppend
             : defaultClasses;
-    const appsClasses =
-        pathname === "/apps"
-            ? defaultClasses + currentTabAppend
-            : defaultClasses;
     return (
         <div role="banner" className="navbar w-nav">
             <div className="w-container">
@@ -47,9 +43,6 @@ export const Navigation: FunctionComponent<NavigationProps> = () => {
                         target="_blank"
                     >
                         Docs
-                    </a>
-                    <a href="/apps" className={appsClasses}>
-                        Apps
                     </a>
                     <a
                         href="#"
