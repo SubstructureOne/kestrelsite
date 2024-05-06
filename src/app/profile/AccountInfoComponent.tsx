@@ -80,6 +80,26 @@ export function AccountInfoTab({
                 <h2>Postgres Info</h2>
                 <div>
                     <h3 className="text-lg border-b-2 border-gray-100">
+                        {process.env.NEXT_PUBLIC_IMPULSE_HOSTNAME}
+                    </h3>
+                    <div className="">
+                        <p className="text-sm font-medium uppercase text-gray-500">
+                            Postgres Hostname
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <h3 className="text-lg border-b-2 border-gray-100">
+                        {process.env.NEXT_PUBLIC_IMPULSE_PORT}
+                    </h3>
+                    <div className="">
+                        <p className="text-sm font-medium uppercase text-gray-500">
+                            Postgres Port
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <h3 className="text-lg border-b-2 border-gray-100">
                         {pgName}
                     </h3>
                     <div className="">
