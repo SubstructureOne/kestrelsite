@@ -10,7 +10,7 @@ export default function Signout() {
     const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey);
     const router = useRouter();
     useEffect(() => {
-        supabase.auth.signOut().then(() => router.push("/"));
+        supabase.auth.signOut().then(() => router.push("/signin"));
     }, [supabase.auth, router]);
     return "Signing out...";
 }
