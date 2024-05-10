@@ -204,13 +204,13 @@ function SignupForm() {
 
                             <div className="col-span-6">
                                 <p className="text-sm text-gray-500">
-                                    By creating an account, you agree to our
+                                    By creating an account, you agree to our{" "}
                                     <Link
                                         href="termsofuse"
                                         className="text-gray-700 underline"
                                     >
                                         terms and conditions
-                                    </Link>
+                                    </Link>{" "}
                                     and{" "}
                                     <Link
                                         href="privacypolicy"
