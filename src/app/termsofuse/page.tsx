@@ -13,38 +13,38 @@ const TermsOfUse: NextPage = () => {
                 <h1>Terms and Conditions</h1>
 
                 <h2 className="my-5">
-                    Agreement between User and kestrelcodes.com
+                    Agreement between User and kestrelcode.com
                 </h2>
                 <p>
-                    Welcome to kestrelcodes.com. The kestrelcodes.com website
-                    (the "Site") is comprised of various web pages operated by
-                    Substructure One, LLC ("Substructure One"). kestrelcodes.com
+                    Welcome to kestrelcode.com. The kestrelcode.com website (the
+                    "Site") is comprised of various web pages operated by
+                    Substructure One, LLC ("Substructure One"). kestrelcode.com
                     is offered to you conditioned on your acceptance without
                     modification of the terms, conditions, and notices contained
-                    herein (the "Terms"). Your use of kestrelcodes.com
+                    herein (the "Terms"). Your use of kestrelcode.com
                     constitutes your agreement to all such Terms. Please read
                     these terms carefully, and keep a copy of them for your
                     reference.
                 </p>
 
-                <p>kestrelcodes.com is an E-Commerce Site.</p>
+                <p>kestrelcode.com is an E-Commerce Site.</p>
 
                 <p>
-                    kestrelcodes.com provides users with access to hosted open
+                    kestrelcode.com provides users with access to hosted open
                     source services on a usage-based payment scheme.
                 </p>
 
                 <h2 className="my-5">Privacy</h2>
                 <p>
-                    Your use of kestrelcodes.com is subject to Substructure
-                    One's Privacy Policy. Please review our Privacy Policy,
-                    which also governs the Site and informs users of our data
-                    collection practices.
+                    Your use of kestrelcode.com is subject to Substructure One's
+                    Privacy Policy. Please review our Privacy Policy, which also
+                    governs the Site and informs users of our data collection
+                    practices.
                 </p>
 
                 <h2 className="my-5">Electronic Communications</h2>
                 <p>
-                    Visiting kestrelcodes.com or sending emails to Substructure
+                    Visiting kestrelcode.com or sending emails to Substructure
                     One constitutes electronic communications. You consent to
                     receive electronic communications and you agree that all
                     agreements, notices, disclosures and other communications
@@ -74,7 +74,7 @@ const TermsOfUse: NextPage = () => {
                     Substructure One does not knowingly collect, either online
                     or offline, personal information from persons under the age
                     of thirteen. If you are under 18, you may use
-                    kestrelcodes.com only with permission of a parent or
+                    kestrelcode.com only with permission of a parent or
                     guardian.
                 </p>
 
@@ -90,10 +90,10 @@ const TermsOfUse: NextPage = () => {
                     Links to Third Party Sites/Third Party Services
                 </h2>
                 <p>
-                    kestrelcodes.com may contain links to other websites
-                    ("Linked Sites"). The Linked Sites are not under the control
-                    of Substructure One and Substructure One is not responsible
-                    for the contents of any Linked Site, including without
+                    kestrelcode.com may contain links to other websites ("Linked
+                    Sites"). The Linked Sites are not under the control of
+                    Substructure One and Substructure One is not responsible for
+                    the contents of any Linked Site, including without
                     limitation any link contained in a Linked Site, or any
                     changes or updates to a Linked Site. Substructure One is
                     providing these links to you only as a convenience, and the
@@ -103,14 +103,14 @@ const TermsOfUse: NextPage = () => {
                 </p>
 
                 <p>
-                    Certain services made available via kestrelcodes.com are
+                    Certain services made available via kestrelcode.com are
                     delivered by third party sites and organizations. By using
                     any product, service or functionality originating from the
-                    kestrelcodes.com domain, you hereby acknowledge and consent
+                    kestrelcode.com domain, you hereby acknowledge and consent
                     that Substructure One may share such information and data
                     with any third party with whom Substructure One has a
                     contractual relationship to provide the requested product,
-                    service or functionality on behalf of kestrelcodes.com users
+                    service or functionality on behalf of kestrelcode.com users
                     and customers.
                 </p>
 
@@ -119,7 +119,7 @@ const TermsOfUse: NextPage = () => {
                 </h2>
                 <p>
                     You are granted a non-exclusive, non-transferable, revocable
-                    license to access and use kestrelcodes.com strictly in
+                    license to access and use kestrelcode.com strictly in
                     accordance with these terms of use. As a condition of your
                     use of the Site, you warrant to Substructure One that you
                     will not use the Site for any purpose that is unlawful or
@@ -170,7 +170,7 @@ const TermsOfUse: NextPage = () => {
                     access the Service from a location outside the USA, you are
                     responsible for compliance with all local laws. You agree
                     that you will not use the Substructure One Content accessed
-                    through kestrelcodes.com in any country or in any manner
+                    through kestrelcode.com in any country or in any manner
                     prohibited by any applicable laws, restrictions or
                     regulations.
                 </p>
@@ -343,7 +343,7 @@ const TermsOfUse: NextPage = () => {
                 <h2 className="my-5">Changes to Terms</h2>
                 <p>
                     Substructure One reserves the right, in its sole discretion,
-                    to change the Terms under which kestrelcodes.com is offered.
+                    to change the Terms under which kestrelcode.com is offered.
                     The most current version of the Terms will supersede all
                     previous versions. Substructure One encourages you to
                     periodically review the Terms to stay informed of our

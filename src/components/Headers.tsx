@@ -9,18 +9,18 @@ type HeadersProps = {
 };
 
 export const Headers: FunctionComponent<HeadersProps> = ({ title }) => {
-    useEffect(() => {
-        const WebFont = require("webfontloader");
-        WebFont.load({
-            google: {
-                families: [
-                    "Vollkorn:400,400italic,700,700italic",
-                    "Roboto Condensed:300,regular,700",
-                    "Roboto:300,regular,500",
-                ],
-            },
-        });
-    }, []);
+    // useEffect(() => {
+    //     const WebFont = require("webfontloader");
+    //     WebFont.load({
+    //         google: {
+    //             families: [
+    //                 "Vollkorn:400,400italic,700,700italic",
+    //                 "Roboto Condensed:300,regular,700",
+    //                 "Roboto:300,regular,500",
+    //             ],
+    //         },
+    //     });
+    // }, []);
     return (
         <>
             <meta charSet="utf-8" />

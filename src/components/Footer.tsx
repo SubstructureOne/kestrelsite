@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Footer = () => {
     return (
         <div className="section footer wf-section">
@@ -18,7 +20,10 @@ const Footer = () => {
                             Project
                         </div>
                         <div className="footer-text">
-                            <a href="termsofuse">Terms & Conditions</a>
+                            <Link href="termsofuse">Terms & Conditions</Link>
+                        </div>
+                        <div className="footer-text">
+                            <Link href="privacypolicy">Privacy Policy</Link>
                         </div>
                     </div>
                     <div className="w-col w-col-4">

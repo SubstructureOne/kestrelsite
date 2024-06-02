@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import { supabaseUrl, supabaseAnonKey } from "@/utils/supabaseClient";
 import Alert from "./Alert";
+import Link from "next/link";
 
 type AuthProperties = {};
 
@@ -125,9 +126,12 @@ export const SigninForm: FunctionComponent<AuthProperties> = () => {
                 <div className="flex items-center justify-between">
                     <p className="text-sm text-gray-500">
                         No account?{" "}
-                        <a className="underline" href="signup">
+                        <Link className="underline" href="signup">
                             Sign up
-                        </a>
+                        </Link>
+                    </p>
+                    <p className="mt-4 text-sm text-gray-500 sm:mt-0">
+                        <Link href="resetpassword">Reset password</Link>
                     </p>
 
                     <button

@@ -3,20 +3,20 @@ import { Client } from "pg";
 import words from "friendly-words";
 
 import PasswordGenerator from "generate-password";
-import { KResult, Err } from "../utils/errors";
-import logger from "../utils/logger";
+import { KResult, Err } from "@/utils/errors";
+import logger from "@/utils/logger";
 import {
     createExternalTransaction,
     createUser,
     getuser,
     pgconnect,
-} from "../utils/database";
+} from "@/utils/database";
 import {
     AccountInfo,
     NewExternalTransactionInfo,
     NewUserInfo,
-} from "../utils/dbtypes";
-import { managed_pgconnect, provisionManagedUser } from "../utils/managed_db";
+} from "@/utils/dbtypes";
+import { managed_pgconnect, provisionManagedUser } from "@/utils/managed_db";
 
 export async function handler(event: SQSEvent) {
     const client = await pgconnect();

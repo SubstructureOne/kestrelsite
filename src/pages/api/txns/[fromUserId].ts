@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { userFromAuthHeader } from "../../../utils/auth";
+import { userFromAuthHeader } from "@/utils/auth";
 import {
     getExternalTransactions,
     getTransactions,
     pgconnect,
-} from "../../../utils/database";
-import logger from "../../../utils/logger";
+} from "@/utils/database";
+import logger from "@/utils/logger";
 
 export default async function handler(
     req: NextApiRequest,
